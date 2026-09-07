@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trading Coach &mdash; dashboard design</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>:root{--bg:#07080c;--panel:#0c0f15;--raised:#12161e;--line:#1a1f29;--line-soft:#14181f;
+--fg:#e9edf4;--fg-2:#b6becc;--fg-3:#8a94a6;--fg-4:#6c7789;--fg-5:#5b6474;
+--accent:#8b7bff;--accent-2:#b9aeff;--accent-d:#5b4bd6;
+--pos:#31e0a0;--pos-3:#2ab682;--neg:#ff5a6e;--neg-2:#ff8494;--warn:#ffb44d;
+--r:11px;--r-sm:7px;--sh:0 1px 0 rgba(255,255,255,.03) inset,0 6px 18px rgba(0,0,0,.32)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.pos{color:var(--pos)}.neg{color:var(--neg)}.warn{color:var(--warn)}
+.note{background:#0f0d1c;border-bottom:1px solid #241f43;padding:6px 20px;font-size:11px;color:#9d92d8}
+.wrap{max-width:1560px;margin:0 auto;padding:0 20px 100px}
+.bar{display:flex;align-items:center;gap:12px;padding:14px 0;flex-wrap:wrap}
+.logo{font-weight:700;font-size:16px;letter-spacing:-.01em}
+.src{font-size:12px;color:var(--fg-4)}.gap{flex:1}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px}
+.seg button{background:none;border:0;color:var(--fg-3);font:inherit;font-size:11.5px;padding:5px 11px;border-radius:6px;cursor:pointer;font-family:"JetBrains Mono",monospace;transition:all .12s}
+.seg button:hover{color:var(--fg)}
+.seg button.on{background:var(--accent-d);color:#fff}
+.btn{background:var(--raised);border:1px solid var(--line);color:var(--fg-2);font:inherit;font-size:12px;padding:6px 12px;border-radius:7px;cursor:pointer}
+.btn:hover{border-color:var(--fg-5);color:var(--fg)}
+.btn.pri{background:var(--accent-d);border-color:var(--accent-d);color:#fff}
+.btn.pri:hover{background:var(--accent)}
+.btn[disabled]{opacity:.55;cursor:default}
+.who{width:27px;height:27px;border-radius:50%;background:var(--raised);border:1px solid var(--line);display:grid;place-items:center;font-size:10px;color:var(--fg-3)}
+.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+.left,.right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.p{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:13px 16px 0}
+.ph .t{font-size:13.5px;font-weight:600}
+.ph .m2,.hd .m2{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--fg-4)}
+.pb{padding:10px 12px 12px}
+.mx{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.mc{background:var(--panel);padding:11px 13px 12px;min-width:0;transition:background .12s}
+.mc:hover{background:var(--raised)}
+.mc .k{font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--fg-4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc .v{font-family:"JetBrains Mono",monospace;font-size:19px;font-weight:600;line-height:1.15;margin-top:5px}
+.mc .s{font-size:10px;color:var(--fg-5);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:0 4px 5px}
+.dow span{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.1em;color:var(--fg-5);text-align:center}
+.grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:0 4px}
+.cd{border-radius:6px;border:1px solid var(--line-soft);background:var(--raised);padding:6px 7px;display:flex;flex-direction:column;min-height:68px;cursor:pointer;transition:transform .1s,border-color .12s}
+.cd:not(.empty):not(.none):hover{transform:translateY(-2px);border-color:#3b4358}
+.cd.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-d)}
+.cd.empty{background:none;border-color:transparent;cursor:default}
+.cd.none{opacity:.55;cursor:default}
+.cd .dn{font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--fg-3);display:flex;align-items:center;gap:4px}
+.cd .jm{width:5px;height:5px;border-radius:50%;background:var(--accent-2);display:inline-block}
+.cd .dv{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;margin-top:auto}
+.cd .dt{font-size:8.5px;color:var(--fg-5)}
+.cd.pos{background:rgba(49,224,160,.09);border-color:rgba(49,224,160,.22)}.cd.pos .dv{color:var(--pos)}
+.cd.neg{background:rgba(255,90,110,.08);border-color:rgba(255,90,110,.2)}.cd.neg .dv{color:var(--neg)}
+.hd{display:flex;justify-content:space-between;align-items:baseline;padding:13px 16px 11px;border-bottom:1px solid var(--line)}
+.hd .t{font-size:14px;font-weight:600}
+.jb{background:linear-gradient(100deg,#100e1f,var(--panel) 60%);border:1px solid #2a2450;border-radius:var(--r);overflow:hidden}
+.jbar{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer}
+.jbar .t{font-size:13px;font-weight:600;white-space:nowrap}
+.jbar .d{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--fg-4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jbar .sp{flex:1}
+.jbar .cta{font-size:11.5px;color:var(--accent-2);white-space:nowrap}
+.jbody{display:none;padding:0 16px 14px}
+.jb.open .jbody{display:block}
+.jb.open .jbar{padding-bottom:8px}
+.emo{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.em{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--fg-3);background:var(--raised);border:1px solid var(--line);border-radius:999px;padding:5px 10px 5px 8px;cursor:pointer;transition:all .12s}
+.em i{font-style:normal;font-size:14px;line-height:1}
+.em:hover{border-color:var(--accent-d);color:var(--fg-2)}
+.em.on{background:var(--accent-d);border-color:var(--accent-d);color:#fff}
+.jb textarea{width:100%;background:var(--raised);border:1px solid var(--line);border-radius:var(--r-sm);color:var(--fg);font:inherit;font-size:12.5px;padding:10px 12px;resize:vertical;min-height:74px;line-height:1.5}
+.jb textarea:focus{outline:none;border-color:var(--accent-d)}
+.jb textarea::placeholder{color:var(--fg-5)}
+.jfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.saved{color:var(--pos);font-size:11.5px;white-space:nowrap}
+.c{padding:16px;border-bottom:1px solid var(--line-soft);transition:background .12s;display:grid;grid-template-columns:34px 1fr;gap:14px}
+.c:last-child{border-bottom:none}.c:hover{background:#0e1219}
+.cnum{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:600;color:var(--fg-5);line-height:1;padding-top:2px}
+.c.top .cnum{color:var(--neg)}
+.c h4{margin:0;font-size:16.5px;font-weight:600;line-height:1.32;letter-spacing:-.012em}
+.c h4 b{color:var(--neg);font-family:"JetBrains Mono",monospace;font-weight:600}
+.c .why{margin:9px 0 0;font-size:13px;line-height:1.55;color:var(--fg-3)}
+.c .do{margin-top:12px;padding:10px 12px;background:var(--raised);border-left:2px solid var(--pos-3);border-radius:var(--r-sm);font-size:13px;line-height:1.5;color:var(--fg)}
+.c .do .cf{display:block;margin-top:5px;color:var(--pos);font-family:"JetBrains Mono",monospace;font-size:11.5px}
+.c .meta{margin-top:9px;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--fg-5);letter-spacing:.04em}
+.c .meta .aib{color:var(--accent-2);border:1px solid rgba(139,123,255,.4);border-radius:4px;padding:1px 5px;margin-left:8px}
+.c .links{margin-top:10px;display:flex;gap:16px;flex-wrap:wrap}
+.c .links a{font-size:11.5px;color:var(--accent-2);cursor:pointer;border-bottom:1px dotted rgba(185,174,255,.35)}
+.c .extra,.c .trades{display:none;margin-top:9px}
+.c .extra{font-size:12px;line-height:1.55;color:var(--fg-4);border-left:2px solid var(--line);padding-left:11px}
+.c.ex .extra{display:block}.c.tr .trades{display:block}
+.trrow{display:flex;justify-content:space-between;gap:8px;padding:4px 0;font-size:11px;color:var(--fg-4);border-bottom:1px solid var(--line-soft)}
+.trrow:last-child{border-bottom:none}
+.trrow b{font-family:"JetBrains Mono",monospace;font-weight:500}
+.empty-state{padding:22px 16px;font-size:13px;line-height:1.55;color:var(--fg-4)}
+.empty-state b{color:var(--fg-2)}
+.win{padding:11px 16px 13px}
+.win .i{padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
+.win .i:last-child{border-bottom:none;padding-bottom:0}
+.win .i b{font-weight:600}
+.win .i span{color:var(--fg-4);font-size:11.5px}
+.win .i span i{font-family:"JetBrains Mono",monospace;color:var(--pos);font-style:normal}
+.win .tick{color:var(--pos);margin-right:6px}
+.sc{padding:12px 16px 14px}
+.sc .top2{display:flex;align-items:baseline;gap:16px}
+.sc .n{font-family:"JetBrains Mono",monospace;font-size:34px;font-weight:600;line-height:1}
+.sc .n small{font-size:13px;color:var(--fg-5)}
+.sc .sp2{font-size:11.5px;color:var(--fg-4);line-height:1.5}
+.sc .sp2 b{color:var(--fg-2);font-family:"JetBrains Mono",monospace}
+.sc .lk{margin-top:10px;background:var(--raised);border:1px dashed var(--accent-d);border-radius:var(--r-sm);padding:8px 11px;font-size:11.5px;color:var(--fg-3);line-height:1.45}
+.sc .lk b{color:var(--accent-2);cursor:pointer}
+.fl{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden}
+.fl>div{background:var(--panel);padding:10px 13px;transition:background .12s}
+.fl>div:hover{background:var(--raised)}
+.fl .k{font-size:11.5px;color:var(--fg-4)}
+.fl .v{font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:600;margin-top:4px}
+.fl .n2{font-size:9.5px;color:var(--fg-5);margin-top:2px}
+#chartbox{position:relative}
+#cross{position:absolute;top:12px;bottom:38px;width:1px;background:rgba(185,174,255,.5);pointer-events:none;opacity:0;transition:opacity .1s}
+#dot{position:absolute;width:9px;height:9px;border-radius:50%;background:#b9aeff;border:2px solid #0c0f15;pointer-events:none;opacity:0;transform:translate(-50%,-50%)}
+#tip{position:absolute;pointer-events:none;opacity:0;background:#161b26;border:1px solid #2b3242;border-radius:8px;padding:8px 11px;box-shadow:0 8px 22px rgba(0,0,0,.5);white-space:nowrap;z-index:5;transition:opacity .1s}
+#tip .d{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--fg-4)}
+#tip .r{display:flex;justify-content:space-between;gap:18px;font-size:11.5px;margin-top:5px}
+#tip .r span{color:var(--fg-4)}#tip .r b{font-family:"JetBrains Mono",monospace;font-weight:600}
+#chartbox.live #cross,#chartbox.live #dot,#chartbox.live #tip{opacity:1}
+.hint,.caltip{position:fixed;pointer-events:none;z-index:60;background:#161b26;border:1px solid #2b3242;border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.55);opacity:0;transition:opacity .1s}
+.hint{padding:9px 12px;max-width:270px;font-size:12px;line-height:1.5;color:var(--fg-2)}
+.hint b{display:block;font-size:11px;font-family:"JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-2);margin-bottom:4px}
+.caltip{padding:9px 11px;font-size:11.5px;transform:translate(-50%,-112%);min-width:150px}
+.caltip .dd{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--fg-4);margin-bottom:5px}
+.caltip .row{display:flex;justify-content:space-between;gap:14px;padding:2px 0;color:var(--fg-4)}
+.caltip .row b{font-family:"JetBrains Mono",monospace;color:var(--fg-2);font-weight:500}
+.coach{position:fixed;right:22px;bottom:22px;display:flex;align-items:center;gap:9px;background:var(--accent-d);border:0;color:#fff;cursor:pointer;padding:12px 18px;border-radius:12px;font:inherit;font-size:14px;font-weight:600;box-shadow:0 8px 26px rgba(91,75,214,.5);z-index:50;transition:transform .15s,background .15s}
+.coach:hover{background:var(--accent);transform:translateY(-2px)}
+.coach svg{width:18px;height:18px}
+.coach .dotp{width:7px;height:7px;border-radius:50%;background:#8ff0c9;margin-left:2px}
+.chat{position:fixed;right:22px;bottom:84px;width:390px;max-width:calc(100vw - 44px);height:540px;max-height:calc(100vh - 140px);background:var(--panel);border:1px solid #2b3242;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.6);z-index:51;display:none;flex-direction:column;overflow:hidden}
+.chat.open{display:flex}
+.chat .ch{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--line)}
+.chat .ch .av{width:26px;height:26px;border-radius:50%;background:var(--accent-d);display:grid;place-items:center;font-size:11px}
+.chat .ch .t{font-size:13.5px;font-weight:600}
+.chat .ch .s{font-size:10.5px;color:var(--fg-4)}
+.chat .ch .x{margin-left:auto;background:none;border:0;color:var(--fg-4);font-size:18px;cursor:pointer;line-height:1;padding:2px 6px}
+.chat .body{flex:1;overflow-y:auto;padding:14px 15px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:9px 12px;border-radius:12px;font-size:12.5px;line-height:1.5}
+.msg.u{align-self:flex-end;background:var(--accent-d);color:#fff;border-bottom-right-radius:4px}
+.msg.a{align-self:flex-start;background:var(--raised);border:1px solid var(--line);color:var(--fg-2);border-bottom-left-radius:4px}
+.msg.a b{color:var(--fg)}
+.msg.think{color:var(--fg-5)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 15px 10px}
+.chip{font-size:11px;color:var(--accent-2);background:rgba(139,123,255,.1);border:1px solid rgba(139,123,255,.3);border-radius:999px;padding:5px 10px;cursor:pointer}
+.chip:hover{background:rgba(139,123,255,.2)}
+.chat .cf2{display:flex;gap:8px;padding:11px 15px;border-top:1px solid var(--line)}
+.chat .cf2 input{flex:1;background:var(--raised);border:1px solid var(--line);border-radius:8px;color:var(--fg);font:inherit;font-size:12.5px;padding:8px 11px}
+.chat .cf2 input:focus{outline:none;border-color:var(--accent-d)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);background:#161b26;border:1px solid #2b3242;border-radius:10px;padding:11px 16px;font-size:12.5px;color:var(--fg-2);box-shadow:0 10px 30px rgba(0,0,0,.6);z-index:70;opacity:0;transition:all .22s}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.daypanel{display:none;border-top:1px solid var(--line);padding:12px 16px 14px}
+.daypanel.on{display:block}
+.daypanel .dh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.daypanel .dh .t{font-size:13px;font-weight:600}
+.daypanel .dh .x{background:none;border:0;color:var(--fg-4);cursor:pointer;font-size:16px;line-height:1}
+@media(max-width:1240px){
+ .cols{display:flex;flex-direction:column}
+ .left,.right{display:contents}
+ .mx{grid-template-columns:repeat(3,1fr)}
+ .o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}
+}
+@media(max-width:700px){
+ .wrap{padding:0 12px 100px}
+ .mx{grid-template-columns:repeat(2,1fr)}
+ .fl{grid-template-columns:1fr}
+ .cd{min-height:44px}.cd .dt{display:none}.cd .dv{font-size:10px}
+ .c{grid-template-columns:24px 1fr;gap:10px;padding:14px 12px}
+ .c h4{font-size:15px}.cnum{font-size:18px}
+ .chat{right:12px;left:12px;width:auto;bottom:80px}
+ .coach{right:14px;bottom:14px;padding:11px 15px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="note">Interactive design demo &middot; synthetic CoinSwitch trader, 94 spot trades run through the real engine &middot; &#8377;75,000 account &middot; every control works</div>
+<div class="wrap">
+  <div class="bar">
+    <span class="logo">Trading Coach</span><span class="src">CoinSwitch &middot; synced 2 min ago</span><span class="gap"></span>
+    <div class="seg"><button type="button" data-rg="TODAY">TODAY</button><button type="button" data-rg="WEEK">WEEK</button><button type="button" data-rg="MONTH">MONTH</button></div>
+    <div class="seg"><button type="button" data-rg="7D">7D</button><button type="button" data-rg="30D">30D</button><button type="button" data-rg="90D">90D</button><button type="button" data-rg="ALL" class="on">ALL</button></div>
+    <button class="btn" type="button" id="adddata">Add data</button>
+    <button class="btn pri" type="button" id="explain">Explain this</button>
+    <span class="who">AR</span>
+  </div>
+  <div class="cols">
+    <div class="left">
+      <div class="p o2"><div class="ph"><span class="t">Your numbers</span><span class="m2" id="rangelabel"></span></div>
+        <div class="pb"><div class="mx" id="mx"></div></div></div>
+      <div class="p o4"><div class="ph"><span class="t">P&amp;L</span><span class="m2" id="chartmeta"></span></div>
+        <div class="pb" id="chartbox"><div class="svgslot"></div><div id="cross"></div><div id="dot"></div><div id="tip"></div></div></div>
+      <div class="p o5"><div class="ph"><span class="t">Calendar</span><span class="m2" id="calmeta"></span></div>
+        <div class="pb"><div class="dow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+        <div class="grid7" id="cal"></div></div>
+        <div class="daypanel" id="daypanel"></div></div>
+      <div class="p o7"><div class="ph"><span class="t">Costs &amp; account</span><span class="m2">FEES &middot; TDS &middot; CAPITAL</span></div>
+        <div class="pb" style="padding-top:8px" id="costbox"></div></div>
+    </div>
+    <div class="right">
+      <div class="jb o1" id="jb">
+        <div class="jbar" id="jbar"><span class="t">Your trading journal</span>
+          <span class="d">WED 5 AUG &middot; 4 TRADES</span><span class="sp"></span>
+          <span class="cta" id="jcta">Add a note &rsaquo;</span></div>
+        <div class="jbody">
+          <div class="emo"><span class="em"><i>&#128524;</i>calm</span><span class="em"><i>&#128548;</i>rushed</span><span class="em"><i>&#128544;</i>frustrated</span><span class="em"><i>&#128526;</i>confident</span><span class="em"><i>&#128528;</i>bored</span><span class="em"><i>&#128560;</i>uneasy</span></div>
+          <textarea placeholder="What was going through your head today?"></textarea>
+          <div class="jfoot"><button class="btn" type="button" id="jskip">Skip</button><button class="btn pri" type="button" id="jsave">Save</button></div>
+        </div>
+      </div>
+      <div class="p o3"><div class="hd"><span class="t">What&rsquo;s costing you</span><span class="m2" id="cardmeta"></span></div>
+        <div id="cardbox"></div></div>
+      <div class="p o6"><div class="hd"><span class="t">What you&rsquo;re doing right</span><span class="m2">FROM YOUR TRADES</span></div>
+        <div id="strbox"></div></div>
+      <div class="p o7"><div class="hd"><span class="t">Your score</span><span class="m2">60% BEHAVIOUR / 40% RESULT</span></div>
+        <div id="scorebox"></div></div>
+    </div>
+  </div>
+</div>
+<div class="hint" id="hint"></div>
+<div class="caltip" id="caltip"></div>
+<div class="toast" id="toast"></div>
+<button class="coach" id="coach" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
+  AI Coach<span class="dotp"></span>
+</button>
+<div class="chat" id="chat">
+  <div class="ch"><span class="av">&#9670;</span><span><span class="t">Your coach</span><br><span class="s">Reads your dashboard &middot; never guesses prices</span></span>
+    <button class="x" id="chatx" type="button">&times;</button></div>
+  <div class="body" id="chatbody"></div>
+  <div class="chips">
+    <span class="chip">Why did I lose money?</span>
+    <span class="chip">Is my drawdown normal?</span>
+    <span class="chip">What should I change first?</span>
+    <span class="chip">Explain my score</span>
+    <span class="chip">What did fees cost me?</span>
+  </div>
+  <div class="cf2"><input placeholder="Ask about your trading&hellip;" id="chatin"><button class="btn pri" type="button" id="chatsend">Send</button></div>
+</div>
+
+<script>
+var DATA={"ALL":{"label":"6 Jul \u2013 10 Aug 2026","m":{"n":94,"net":11621,"wr":50.0,"be":44.0,"pf":1.27,"exp":124,"avgW":1152,"avgL":905,"ratio":1.27,"W":47,"L":47,"dd":13610,"lstreak":5,"wstreak":5,"days":33,"green":20,"red":13,"tpd":2.8,"fees":8620,"tds":43197,"avgR":0.08,"nR":71,"rr":2.05,"cap":0.71,"riskPct":1.17,"maxRisk":2.32,"lev":0.62,"score":50,"disc":47,"perf":53,"prov":false,"provWhy":null,"start":"2026-07-06","end":"2026-08-10","idx3":16161},"spokes":[["Rule adherence",null],["Overtrading control",87],["Sizing consistency",0],["Stop discipline",56],["Expectancy",58],["Profit factor",52],["Drawdown control",50]],"curve":[[1,"6 Jul 10:05",61,61],[2,"6 Jul 11:29",1003,1064],[3,"8 Jul 02:25",-1860,-797],[4,"8 Jul 14:45",-232,-1029],[5,"8 Jul 22:47",-1414,-2443],[6,"10 Jul 02:17",814,-1629],[7,"10 Jul 02:26",-953,-2582],[8,"10 Jul 10:33",467,-2115],[9,"10 Jul 15:46",-13,-2129],[10,"11 Jul 13:14",1515,-613],[11,"12 Jul 00:29",3324,2710],[12,"12 Jul 02:37",-1341,1369],[13,"12 Jul 03:11",-1930,-561],[14,"12 Jul 11:03",-1150,-1711],[15,"12 Jul 19:15",6,-1705],[16,"13 Jul 16:36",-115,-1820],[17,"14 Jul 02:33",-2973,-4792],[18,"14 Jul 03:00",1413,-3380],[19,"14 Jul 03:45",-27,-3407],[20,"14 Jul 13:14",822,-2585],[21,"14 Jul 14:49",-1489,-4073],[22,"15 Jul 02:41",-1117,-5190],[23,"15 Jul 15:25",-295,-5485],[24,"15 Jul 21:50",1239,-4246],[25,"16 Jul 10:57",187,-4059],[26,"16 Jul 21:35",-484,-4543],[27,"17 Jul 13:54",-1475,-6018],[28,"17 Jul 15:17",-97,-6115],[29,"17 Jul 16:10",253,-5862],[30,"17 Jul 16:28",-425,-6287],[31,"17 Jul 20:14",-2285,-8572],[32,"19 Jul 11:32",705,-7868],[33,"19 Jul 12:04",72,-7796],[34,"19 Jul 20:05",118,-7678],[35,"20 Jul 12:44",-94,-7772],[36,"20 Jul 12:51",-1752,-9524],[37,"20 Jul 18:34",-97,-9622],[38,"21 Jul 16:47",-601,-10222],[39,"21 Jul 18:30",-145,-10368],[40,"21 Jul 19:21",183,-10185],[41,"21 Jul 20:39",-715,-10900],[42,"22 Jul 11:18",1540,-9360],[43,"22 Jul 23:35",271,-9089],[44,"23 Jul 01:40",1137,-7952],[45,"23 Jul 04:04",-1470,-9422],[46,"23 Jul 14:51",3530,-5892],[47,"23 Jul 15:06",456,-5437],[48,"23 Jul 23:34",-575,-6012],[49,"24 Jul 22:23",-1997,-8009],[50,"25 Jul 10:51",-584,-8593],[51,"25 Jul 10:58",808,-7785],[52,"26 Jul 02:04",1712,-6073],[53,"26 Jul 12:17",2038,-4034],[54,"26 Jul 20:50",1810,-2224],[55,"27 Jul 02:05",-1841,-4065],[56,"27 Jul 14:40",-222,-4288],[57,"27 Jul 19:20",2933,-1355],[58,"28 Jul 14:35",-308,-1663],[59,"28 Jul 14:55",284,-1378],[60,"28 Jul 20:57",371,-1007],[61,"29 Jul 23:41",1361,354],[62,"30 Jul 12:20",-1707,-1354],[63,"30 Jul 13:50",1901,548],[64,"30 Jul 21:57",1201,1748],[65,"31 Jul 20:08",-173,1576],[66,"31 Jul 22:50",2627,4203],[67,"1 Aug 01:14",-53,4150],[68,"1 Aug 19:27",924,5075],[69,"1 Aug 22:09",-597,4478],[70,"2 Aug 13:26",1273,5751],[71,"3 Aug 12:20",-469,5282],[72,"3 Aug 13:36",170,5453],[73,"3 Aug 14:40",162,5615],[74,"4 Aug 12:11",715,6329],[75,"4 Aug 16:50",671,7000],[76,"4 Aug 19:11",707,7707],[77,"4 Aug 21:22",-784,6924],[78,"5 Aug 02:59",-404,6520],[79,"5 Aug 03:27",-798,5722],[80,"5 Aug 03:32",-1367,4355],[81,"5 Aug 12:25",-2198,2157],[82,"5 Aug 12:38",1920,4077],[83,"5 Aug 18:56",664,4741],[84,"6 Aug 11:28",560,5301],[85,"6 Aug 18:21",203,5504],[86,"7 Aug 01:13",-465,5039],[87,"7 Aug 15:20",-2091,2948],[88,"7 Aug 22:33",3490,6438],[89,"8 Aug 12:46",2697,9135],[90,"8 Aug 19:02",955,10090],[91,"9 Aug 21:59",2890,12980],[92,"10 Aug 13:40",-790,12189],[93,"10 Aug 21:59",-237,11952],[94,"10 Aug 22:42",-332,11621]],"days":{"2026-07-06":[1064,2,2,[["10:05","long","SOL",61],["11:29","long","BTC",1003]]],"2026-07-08":[-3506,3,0,[["02:25","long","ETH",-1860],["14:45","long","BTC",-232],["22:47","long","BTC",-1414]]],"2026-07-10":[314,4,2,[["02:17","long","BTC",814],["02:26","long","BTC",-953],["10:33","long","ETH",467],["15:46","short","BTC",-13]]],"2026-07-11":[1515,1,1,[["13:14","short","BTC",1515]]],"2026-07-12":[-1091,5,2,[["00:29","short","ETH",3324],["02:37","long","ETH",-1341],["03:11","long","BTC",-1930],["11:03","long","BTC",-1150],["19:15","long","BTC",6]]],"2026-07-13":[-115,1,0,[["16:36","short","SOL",-115]]],"2026-07-14":[-2254,5,2,[["02:33","short","ETH",-2973],["03:00","long","BTC",1413],["03:45","short","SOL",-27],["13:14","short","ETH",822],["14:49","short","BTC",-1489]]],"2026-07-15":[-173,3,1,[["02:41","long","BTC",-1117],["15:25","long","BTC",-295],["21:50","long","BTC",1239]]],"2026-07-16":[-297,2,1,[["10:57","long","BTC",187],["21:35","long","ETH",-484]]],"2026-07-17":[-4030,5,1,[["13:54","long","BTC",-1475],["15:17","short","ETH",-97],["16:10","long","SOL",253],["16:28","short","ETH",-425],["20:14","short","SOL",-2285]]],"2026-07-19":[894,3,3,[["11:32","short","BTC",705],["12:04","long","BTC",72],["20:05","long","BTC",118]]],"2026-07-20":[-1943,3,0,[["12:44","short","SOL",-94],["12:51","long","BTC",-1752],["18:34","long","SOL",-97]]],"2026-07-21":[-1278,4,1,[["16:47","long","ETH",-601],["18:30","long","BTC",-145],["19:21","short","SOL",183],["20:39","long","SOL",-715]]],"2026-07-22":[1811,2,2,[["11:18","long","BTC",1540],["23:35","long","BTC",271]]],"2026-07-23":[3077,5,3,[["01:40","short","BTC",1137],["04:04","long","BTC",-1470],["14:51","long","BTC",3530],["15:06","short","BTC",456],["23:34","short","ETH",-575]]],"2026-07-24":[-1997,1,0,[["22:23","long","BTC",-1997]]],"2026-07-25":[224,2,1,[["10:51","long","ETH",-584],["10:58","short","BTC",808]]],"2026-07-26":[5561,3,3,[["02:04","long","BTC",1712],["12:17","short","SOL",2038],["20:50","long","BTC",1810]]],"2026-07-27":[869,3,1,[["02:05","long","BTC",-1841],["14:40","long","ETH",-222],["19:20","long","SOL",2933]]],"2026-07-28":[348,3,2,[["14:35","long","BTC",-308],["14:55","long","SOL",284],["20:57","long","BTC",371]]],"2026-07-29":[1361,1,1,[["23:41","long","SOL",1361]]],"2026-07-30":[1395,3,2,[["12:20","short","BTC",-1707],["13:50","long","ETH",1901],["21:57","long","SOL",1201]]],"2026-07-31":[2455,2,1,[["20:08","long","ETH",-173],["22:50","long","BTC",2627]]],"2026-08-01":[275,3,1,[["01:14","long","SOL",-53],["19:27","long","ETH",924],["22:09","long","BTC",-597]]],"2026-08-02":[1273,1,1,[["13:26","short","SOL",1273]]],"2026-08-03":[-136,3,2,[["12:20","long","SOL",-469],["13:36","long","BTC",170],["14:40","short","BTC",162]]],"2026-08-04":[1309,4,3,[["12:11","long","SOL",715],["16:50","short","BTC",671],["19:11","long","BTC",707],["21:22","long","ETH",-784]]],"2026-08-05":[-2183,6,2,[["02:59","long","BTC",-404],["03:27","short","BTC",-798],["03:32","long","BTC",-1367],["12:25","short","BTC",-2198],["12:38","short","BTC",1920],["18:56","long","BTC",664]]],"2026-08-06":[763,2,2,[["11:28","short","BTC",560],["18:21","long","BTC",203]]],"2026-08-07":[933,3,1,[["01:13","long","SOL",-465],["15:20","long","BTC",-2091],["22:33","long","BTC",3490]]],"2026-08-08":[3652,2,2,[["12:46","long","BTC",2697],["19:02","long","BTC",955]]],"2026-08-09":[2890,1,1,[["21:59","long","BTC",2890]]],"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[{"id":"evening_window","bk":"evening","gross":-11524,"marg":-11524,"n":18,"won":4,"rows":[["8 Jul 02:25","long","ETH",-1860],["10 Jul 02:17","long","BTC",814],["10 Jul 02:26","long","BTC",-953],["12 Jul 02:37","long","ETH",-1341],["12 Jul 03:11","long","BTC",-1930],["14 Jul 02:33","short","ETH",-2973],["14 Jul 03:00","long","BTC",1413],["14 Jul 03:45","short","SOL",-27]]},{"id":"pnl_by_trade_index","bk":"5","gross":-6542,"marg":-6542,"n":5,"won":1,"rows":[["12 Jul 19:15","long","BTC",6],["14 Jul 14:49","short","BTC",-1489],["17 Jul 20:14","short","SOL",-2285],["23 Jul 23:34","short","ETH",-575],["5 Aug 12:25","short","BTC",-2198]]},{"id":"fast_reentry","bk":"fast_reentry","gross":-3836,"marg":-1117,"n":14,"won":4,"rows":[["10 Jul 02:17","long","BTC",814],["12 Jul 02:37","long","ETH",-1341],["14 Jul 03:45","short","SOL",-27],["17 Jul 16:28","short","ETH",-425],["17 Jul 15:17","short","ETH",-97],["20 Jul 12:51","long","BTC",-1752],["21 Jul 18:30","long","BTC",-145],["21 Jul 20:39","long","SOL",-715]]}],"str":[["pnl_by_trade_index","3",9807,20],["pnl_by_weekday","6",9527,13],["pnl_by_trade_index","1",9162,33],["pnl_by_instrument","Bitcoin",8888,56],["pnl_by_symbol","BTC/INR",8888,56]]},"90D":{"label":"Last 90 days","m":{"n":94,"net":11621,"wr":50.0,"be":44.0,"pf":1.27,"exp":124,"avgW":1152,"avgL":905,"ratio":1.27,"W":47,"L":47,"dd":13610,"lstreak":5,"wstreak":5,"days":33,"green":20,"red":13,"tpd":2.8,"fees":8620,"tds":43197,"avgR":0.08,"nR":71,"rr":2.05,"cap":0.71,"riskPct":1.17,"maxRisk":2.32,"lev":0.62,"score":50,"disc":47,"perf":53,"prov":false,"provWhy":null,"start":"2026-07-06","end":"2026-08-10","idx3":16161},"spokes":[["Rule adherence",null],["Overtrading control",87],["Sizing consistency",0],["Stop discipline",56],["Expectancy",58],["Profit factor",52],["Drawdown control",50]],"curve":[[1,"6 Jul 10:05",61,61],[2,"6 Jul 11:29",1003,1064],[3,"8 Jul 02:25",-1860,-797],[4,"8 Jul 14:45",-232,-1029],[5,"8 Jul 22:47",-1414,-2443],[6,"10 Jul 02:17",814,-1629],[7,"10 Jul 02:26",-953,-2582],[8,"10 Jul 10:33",467,-2115],[9,"10 Jul 15:46",-13,-2129],[10,"11 Jul 13:14",1515,-613],[11,"12 Jul 00:29",3324,2710],[12,"12 Jul 02:37",-1341,1369],[13,"12 Jul 03:11",-1930,-561],[14,"12 Jul 11:03",-1150,-1711],[15,"12 Jul 19:15",6,-1705],[16,"13 Jul 16:36",-115,-1820],[17,"14 Jul 02:33",-2973,-4792],[18,"14 Jul 03:00",1413,-3380],[19,"14 Jul 03:45",-27,-3407],[20,"14 Jul 13:14",822,-2585],[21,"14 Jul 14:49",-1489,-4073],[22,"15 Jul 02:41",-1117,-5190],[23,"15 Jul 15:25",-295,-5485],[24,"15 Jul 21:50",1239,-4246],[25,"16 Jul 10:57",187,-4059],[26,"16 Jul 21:35",-484,-4543],[27,"17 Jul 13:54",-1475,-6018],[28,"17 Jul 15:17",-97,-6115],[29,"17 Jul 16:10",253,-5862],[30,"17 Jul 16:28",-425,-6287],[31,"17 Jul 20:14",-2285,-8572],[32,"19 Jul 11:32",705,-7868],[33,"19 Jul 12:04",72,-7796],[34,"19 Jul 20:05",118,-7678],[35,"20 Jul 12:44",-94,-7772],[36,"20 Jul 12:51",-1752,-9524],[37,"20 Jul 18:34",-97,-9622],[38,"21 Jul 16:47",-601,-10222],[39,"21 Jul 18:30",-145,-10368],[40,"21 Jul 19:21",183,-10185],[41,"21 Jul 20:39",-715,-10900],[42,"22 Jul 11:18",1540,-9360],[43,"22 Jul 23:35",271,-9089],[44,"23 Jul 01:40",1137,-7952],[45,"23 Jul 04:04",-1470,-9422],[46,"23 Jul 14:51",3530,-5892],[47,"23 Jul 15:06",456,-5437],[48,"23 Jul 23:34",-575,-6012],[49,"24 Jul 22:23",-1997,-8009],[50,"25 Jul 10:51",-584,-8593],[51,"25 Jul 10:58",808,-7785],[52,"26 Jul 02:04",1712,-6073],[53,"26 Jul 12:17",2038,-4034],[54,"26 Jul 20:50",1810,-2224],[55,"27 Jul 02:05",-1841,-4065],[56,"27 Jul 14:40",-222,-4288],[57,"27 Jul 19:20",2933,-1355],[58,"28 Jul 14:35",-308,-1663],[59,"28 Jul 14:55",284,-1378],[60,"28 Jul 20:57",371,-1007],[61,"29 Jul 23:41",1361,354],[62,"30 Jul 12:20",-1707,-1354],[63,"30 Jul 13:50",1901,548],[64,"30 Jul 21:57",1201,1748],[65,"31 Jul 20:08",-173,1576],[66,"31 Jul 22:50",2627,4203],[67,"1 Aug 01:14",-53,4150],[68,"1 Aug 19:27",924,5075],[69,"1 Aug 22:09",-597,4478],[70,"2 Aug 13:26",1273,5751],[71,"3 Aug 12:20",-469,5282],[72,"3 Aug 13:36",170,5453],[73,"3 Aug 14:40",162,5615],[74,"4 Aug 12:11",715,6329],[75,"4 Aug 16:50",671,7000],[76,"4 Aug 19:11",707,7707],[77,"4 Aug 21:22",-784,6924],[78,"5 Aug 02:59",-404,6520],[79,"5 Aug 03:27",-798,5722],[80,"5 Aug 03:32",-1367,4355],[81,"5 Aug 12:25",-2198,2157],[82,"5 Aug 12:38",1920,4077],[83,"5 Aug 18:56",664,4741],[84,"6 Aug 11:28",560,5301],[85,"6 Aug 18:21",203,5504],[86,"7 Aug 01:13",-465,5039],[87,"7 Aug 15:20",-2091,2948],[88,"7 Aug 22:33",3490,6438],[89,"8 Aug 12:46",2697,9135],[90,"8 Aug 19:02",955,10090],[91,"9 Aug 21:59",2890,12980],[92,"10 Aug 13:40",-790,12189],[93,"10 Aug 21:59",-237,11952],[94,"10 Aug 22:42",-332,11621]],"days":{"2026-07-06":[1064,2,2,[["10:05","long","SOL",61],["11:29","long","BTC",1003]]],"2026-07-08":[-3506,3,0,[["02:25","long","ETH",-1860],["14:45","long","BTC",-232],["22:47","long","BTC",-1414]]],"2026-07-10":[314,4,2,[["02:17","long","BTC",814],["02:26","long","BTC",-953],["10:33","long","ETH",467],["15:46","short","BTC",-13]]],"2026-07-11":[1515,1,1,[["13:14","short","BTC",1515]]],"2026-07-12":[-1091,5,2,[["00:29","short","ETH",3324],["02:37","long","ETH",-1341],["03:11","long","BTC",-1930],["11:03","long","BTC",-1150],["19:15","long","BTC",6]]],"2026-07-13":[-115,1,0,[["16:36","short","SOL",-115]]],"2026-07-14":[-2254,5,2,[["02:33","short","ETH",-2973],["03:00","long","BTC",1413],["03:45","short","SOL",-27],["13:14","short","ETH",822],["14:49","short","BTC",-1489]]],"2026-07-15":[-173,3,1,[["02:41","long","BTC",-1117],["15:25","long","BTC",-295],["21:50","long","BTC",1239]]],"2026-07-16":[-297,2,1,[["10:57","long","BTC",187],["21:35","long","ETH",-484]]],"2026-07-17":[-4030,5,1,[["13:54","long","BTC",-1475],["15:17","short","ETH",-97],["16:10","long","SOL",253],["16:28","short","ETH",-425],["20:14","short","SOL",-2285]]],"2026-07-19":[894,3,3,[["11:32","short","BTC",705],["12:04","long","BTC",72],["20:05","long","BTC",118]]],"2026-07-20":[-1943,3,0,[["12:44","short","SOL",-94],["12:51","long","BTC",-1752],["18:34","long","SOL",-97]]],"2026-07-21":[-1278,4,1,[["16:47","long","ETH",-601],["18:30","long","BTC",-145],["19:21","short","SOL",183],["20:39","long","SOL",-715]]],"2026-07-22":[1811,2,2,[["11:18","long","BTC",1540],["23:35","long","BTC",271]]],"2026-07-23":[3077,5,3,[["01:40","short","BTC",1137],["04:04","long","BTC",-1470],["14:51","long","BTC",3530],["15:06","short","BTC",456],["23:34","short","ETH",-575]]],"2026-07-24":[-1997,1,0,[["22:23","long","BTC",-1997]]],"2026-07-25":[224,2,1,[["10:51","long","ETH",-584],["10:58","short","BTC",808]]],"2026-07-26":[5561,3,3,[["02:04","long","BTC",1712],["12:17","short","SOL",2038],["20:50","long","BTC",1810]]],"2026-07-27":[869,3,1,[["02:05","long","BTC",-1841],["14:40","long","ETH",-222],["19:20","long","SOL",2933]]],"2026-07-28":[348,3,2,[["14:35","long","BTC",-308],["14:55","long","SOL",284],["20:57","long","BTC",371]]],"2026-07-29":[1361,1,1,[["23:41","long","SOL",1361]]],"2026-07-30":[1395,3,2,[["12:20","short","BTC",-1707],["13:50","long","ETH",1901],["21:57","long","SOL",1201]]],"2026-07-31":[2455,2,1,[["20:08","long","ETH",-173],["22:50","long","BTC",2627]]],"2026-08-01":[275,3,1,[["01:14","long","SOL",-53],["19:27","long","ETH",924],["22:09","long","BTC",-597]]],"2026-08-02":[1273,1,1,[["13:26","short","SOL",1273]]],"2026-08-03":[-136,3,2,[["12:20","long","SOL",-469],["13:36","long","BTC",170],["14:40","short","BTC",162]]],"2026-08-04":[1309,4,3,[["12:11","long","SOL",715],["16:50","short","BTC",671],["19:11","long","BTC",707],["21:22","long","ETH",-784]]],"2026-08-05":[-2183,6,2,[["02:59","long","BTC",-404],["03:27","short","BTC",-798],["03:32","long","BTC",-1367],["12:25","short","BTC",-2198],["12:38","short","BTC",1920],["18:56","long","BTC",664]]],"2026-08-06":[763,2,2,[["11:28","short","BTC",560],["18:21","long","BTC",203]]],"2026-08-07":[933,3,1,[["01:13","long","SOL",-465],["15:20","long","BTC",-2091],["22:33","long","BTC",3490]]],"2026-08-08":[3652,2,2,[["12:46","long","BTC",2697],["19:02","long","BTC",955]]],"2026-08-09":[2890,1,1,[["21:59","long","BTC",2890]]],"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[{"id":"evening_window","bk":"evening","gross":-11524,"marg":-11524,"n":18,"won":4,"rows":[["8 Jul 02:25","long","ETH",-1860],["10 Jul 02:17","long","BTC",814],["10 Jul 02:26","long","BTC",-953],["12 Jul 02:37","long","ETH",-1341],["12 Jul 03:11","long","BTC",-1930],["14 Jul 02:33","short","ETH",-2973],["14 Jul 03:00","long","BTC",1413],["14 Jul 03:45","short","SOL",-27]]},{"id":"pnl_by_trade_index","bk":"5","gross":-6542,"marg":-6542,"n":5,"won":1,"rows":[["12 Jul 19:15","long","BTC",6],["14 Jul 14:49","short","BTC",-1489],["17 Jul 20:14","short","SOL",-2285],["23 Jul 23:34","short","ETH",-575],["5 Aug 12:25","short","BTC",-2198]]},{"id":"fast_reentry","bk":"fast_reentry","gross":-3836,"marg":-1117,"n":14,"won":4,"rows":[["10 Jul 02:17","long","BTC",814],["12 Jul 02:37","long","ETH",-1341],["14 Jul 03:45","short","SOL",-27],["17 Jul 16:28","short","ETH",-425],["17 Jul 15:17","short","ETH",-97],["20 Jul 12:51","long","BTC",-1752],["21 Jul 18:30","long","BTC",-145],["21 Jul 20:39","long","SOL",-715]]}],"str":[["pnl_by_trade_index","3",9807,20],["pnl_by_weekday","6",9527,13],["pnl_by_trade_index","1",9162,33],["pnl_by_instrument","Bitcoin",8888,56],["pnl_by_symbol","BTC/INR",8888,56]]},"30D":{"label":"12 Jul \u2013 10 Aug","m":{"n":84,"net":12234,"wr":50.0,"be":43.1,"pf":1.32,"exp":146,"avgW":1198,"avgL":906,"ratio":1.32,"W":42,"L":42,"dd":13610,"lstreak":5,"wstreak":5,"days":29,"green":17,"red":12,"tpd":2.9,"fees":7700,"tds":38627,"avgR":0.05,"nR":63,"rr":2.06,"cap":0.74,"riskPct":1.17,"maxRisk":2.32,"lev":0.62,"score":50,"disc":47,"perf":54,"prov":false,"provWhy":null,"start":"2026-07-12","end":"2026-08-10","idx3":16761},"spokes":[["Rule adherence",null],["Overtrading control",86],["Sizing consistency",0],["Stop discipline",55],["Expectancy",54],["Profit factor",56],["Drawdown control",52]],"curve":[[1,"12 Jul 00:29",3324,3324],[2,"12 Jul 02:37",-1341,1982],[3,"12 Jul 03:11",-1930,53],[4,"12 Jul 11:03",-1150,-1097],[5,"12 Jul 19:15",6,-1091],[6,"13 Jul 16:36",-115,-1206],[7,"14 Jul 02:33",-2973,-4179],[8,"14 Jul 03:00",1413,-2766],[9,"14 Jul 03:45",-27,-2793],[10,"14 Jul 13:14",822,-1971],[11,"14 Jul 14:49",-1489,-3460],[12,"15 Jul 02:41",-1117,-4577],[13,"15 Jul 15:25",-295,-4872],[14,"15 Jul 21:50",1239,-3632],[15,"16 Jul 10:57",187,-3445],[16,"16 Jul 21:35",-484,-3929],[17,"17 Jul 13:54",-1475,-5405],[18,"17 Jul 15:17",-97,-5501],[19,"17 Jul 16:10",253,-5248],[20,"17 Jul 16:28",-425,-5673],[21,"17 Jul 20:14",-2285,-7959],[22,"19 Jul 11:32",705,-7254],[23,"19 Jul 12:04",72,-7183],[24,"19 Jul 20:05",118,-7065],[25,"20 Jul 12:44",-94,-7159],[26,"20 Jul 12:51",-1752,-8911],[27,"20 Jul 18:34",-97,-9008],[28,"21 Jul 16:47",-601,-9609],[29,"21 Jul 18:30",-145,-9754],[30,"21 Jul 19:21",183,-9571],[31,"21 Jul 20:39",-715,-10286],[32,"22 Jul 11:18",1540,-8747],[33,"22 Jul 23:35",271,-8475],[34,"23 Jul 01:40",1137,-7339],[35,"23 Jul 04:04",-1470,-8809],[36,"23 Jul 14:51",3530,-5279],[37,"23 Jul 15:06",456,-4823],[38,"23 Jul 23:34",-575,-5398],[39,"24 Jul 22:23",-1997,-7395],[40,"25 Jul 10:51",-584,-7979],[41,"25 Jul 10:58",808,-7172],[42,"26 Jul 02:04",1712,-5459],[43,"26 Jul 12:17",2038,-3421],[44,"26 Jul 20:50",1810,-1611],[45,"27 Jul 02:05",-1841,-3452],[46,"27 Jul 14:40",-222,-3675],[47,"27 Jul 19:20",2933,-742],[48,"28 Jul 14:35",-308,-1049],[49,"28 Jul 14:55",284,-765],[50,"28 Jul 20:57",371,-394],[51,"29 Jul 23:41",1361,967],[52,"30 Jul 12:20",-1707,-740],[53,"30 Jul 13:50",1901,1161],[54,"30 Jul 21:57",1201,2362],[55,"31 Jul 20:08",-173,2189],[56,"31 Jul 22:50",2627,4817],[57,"1 Aug 01:14",-53,4764],[58,"1 Aug 19:27",924,5688],[59,"1 Aug 22:09",-597,5091],[60,"2 Aug 13:26",1273,6364],[61,"3 Aug 12:20",-469,5896],[62,"3 Aug 13:36",170,6066],[63,"3 Aug 14:40",162,6228],[64,"4 Aug 12:11",715,6943],[65,"4 Aug 16:50",671,7614],[66,"4 Aug 19:11",707,8321],[67,"4 Aug 21:22",-784,7537],[68,"5 Aug 02:59",-404,7133],[69,"5 Aug 03:27",-798,6336],[70,"5 Aug 03:32",-1367,4969],[71,"5 Aug 12:25",-2198,2770],[72,"5 Aug 12:38",1920,4690],[73,"5 Aug 18:56",664,5355],[74,"6 Aug 11:28",560,5915],[75,"6 Aug 18:21",203,6118],[76,"7 Aug 01:13",-465,5653],[77,"7 Aug 15:20",-2091,3561],[78,"7 Aug 22:33",3490,7051],[79,"8 Aug 12:46",2697,9748],[80,"8 Aug 19:02",955,10703],[81,"9 Aug 21:59",2890,13593],[82,"10 Aug 13:40",-790,12803],[83,"10 Aug 21:59",-237,12566],[84,"10 Aug 22:42",-332,12234]],"days":{"2026-07-12":[-1091,5,2,[["00:29","short","ETH",3324],["02:37","long","ETH",-1341],["03:11","long","BTC",-1930],["11:03","long","BTC",-1150],["19:15","long","BTC",6]]],"2026-07-13":[-115,1,0,[["16:36","short","SOL",-115]]],"2026-07-14":[-2254,5,2,[["02:33","short","ETH",-2973],["03:00","long","BTC",1413],["03:45","short","SOL",-27],["13:14","short","ETH",822],["14:49","short","BTC",-1489]]],"2026-07-15":[-173,3,1,[["02:41","long","BTC",-1117],["15:25","long","BTC",-295],["21:50","long","BTC",1239]]],"2026-07-16":[-297,2,1,[["10:57","long","BTC",187],["21:35","long","ETH",-484]]],"2026-07-17":[-4030,5,1,[["13:54","long","BTC",-1475],["15:17","short","ETH",-97],["16:10","long","SOL",253],["16:28","short","ETH",-425],["20:14","short","SOL",-2285]]],"2026-07-19":[894,3,3,[["11:32","short","BTC",705],["12:04","long","BTC",72],["20:05","long","BTC",118]]],"2026-07-20":[-1943,3,0,[["12:44","short","SOL",-94],["12:51","long","BTC",-1752],["18:34","long","SOL",-97]]],"2026-07-21":[-1278,4,1,[["16:47","long","ETH",-601],["18:30","long","BTC",-145],["19:21","short","SOL",183],["20:39","long","SOL",-715]]],"2026-07-22":[1811,2,2,[["11:18","long","BTC",1540],["23:35","long","BTC",271]]],"2026-07-23":[3077,5,3,[["01:40","short","BTC",1137],["04:04","long","BTC",-1470],["14:51","long","BTC",3530],["15:06","short","BTC",456],["23:34","short","ETH",-575]]],"2026-07-24":[-1997,1,0,[["22:23","long","BTC",-1997]]],"2026-07-25":[224,2,1,[["10:51","long","ETH",-584],["10:58","short","BTC",808]]],"2026-07-26":[5561,3,3,[["02:04","long","BTC",1712],["12:17","short","SOL",2038],["20:50","long","BTC",1810]]],"2026-07-27":[869,3,1,[["02:05","long","BTC",-1841],["14:40","long","ETH",-222],["19:20","long","SOL",2933]]],"2026-07-28":[348,3,2,[["14:35","long","BTC",-308],["14:55","long","SOL",284],["20:57","long","BTC",371]]],"2026-07-29":[1361,1,1,[["23:41","long","SOL",1361]]],"2026-07-30":[1395,3,2,[["12:20","short","BTC",-1707],["13:50","long","ETH",1901],["21:57","long","SOL",1201]]],"2026-07-31":[2455,2,1,[["20:08","long","ETH",-173],["22:50","long","BTC",2627]]],"2026-08-01":[275,3,1,[["01:14","long","SOL",-53],["19:27","long","ETH",924],["22:09","long","BTC",-597]]],"2026-08-02":[1273,1,1,[["13:26","short","SOL",1273]]],"2026-08-03":[-136,3,2,[["12:20","long","SOL",-469],["13:36","long","BTC",170],["14:40","short","BTC",162]]],"2026-08-04":[1309,4,3,[["12:11","long","SOL",715],["16:50","short","BTC",671],["19:11","long","BTC",707],["21:22","long","ETH",-784]]],"2026-08-05":[-2183,6,2,[["02:59","long","BTC",-404],["03:27","short","BTC",-798],["03:32","long","BTC",-1367],["12:25","short","BTC",-2198],["12:38","short","BTC",1920],["18:56","long","BTC",664]]],"2026-08-06":[763,2,2,[["11:28","short","BTC",560],["18:21","long","BTC",203]]],"2026-08-07":[933,3,1,[["01:13","long","SOL",-465],["15:20","long","BTC",-2091],["22:33","long","BTC",3490]]],"2026-08-08":[3652,2,2,[["12:46","long","BTC",2697],["19:02","long","BTC",955]]],"2026-08-09":[2890,1,1,[["21:59","long","BTC",2890]]],"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[{"id":"evening_window","bk":"evening","gross":-9523,"marg":-9523,"n":15,"won":3,"rows":[["12 Jul 02:37","long","ETH",-1341],["12 Jul 03:11","long","BTC",-1930],["14 Jul 02:33","short","ETH",-2973],["14 Jul 03:00","long","BTC",1413],["14 Jul 03:45","short","SOL",-27],["15 Jul 02:41","long","BTC",-1117],["23 Jul 01:40","short","BTC",1137],["23 Jul 04:04","long","BTC",-1470]]},{"id":"pnl_by_trade_index","bk":"5","gross":-6542,"marg":-6542,"n":5,"won":1,"rows":[["12 Jul 19:15","long","BTC",6],["14 Jul 14:49","short","BTC",-1489],["17 Jul 20:14","short","SOL",-2285],["23 Jul 23:34","short","ETH",-575],["5 Aug 12:25","short","BTC",-2198]]},{"id":"fast_reentry","bk":"fast_reentry","gross":-4649,"marg":-1117,"n":13,"won":3,"rows":[["12 Jul 02:37","long","ETH",-1341],["14 Jul 03:45","short","SOL",-27],["17 Jul 16:28","short","ETH",-425],["17 Jul 15:17","short","ETH",-97],["20 Jul 12:51","long","BTC",-1752],["21 Jul 18:30","long","BTC",-145],["21 Jul 20:39","long","SOL",-715],["21 Jul 19:21","short","SOL",183]]}],"str":[["pnl_by_direction","long",10959,59],["pnl_by_trade_index","3",10754,18],["pnl_by_trade_index","1",10399,29],["pnl_by_weekday","6",9527,13],["pnl_by_instrument","Bitcoin",8169,49]]},"7D":{"label":"4 \u2013 10 Aug","m":{"n":21,"net":6006,"wr":52.4,"be":40.2,"pf":1.63,"exp":286,"avgW":1407,"avgL":947,"ratio":1.49,"W":11,"L":10,"dd":5550,"lstreak":5,"wstreak":4,"days":7,"green":5,"red":2,"tpd":3.0,"fees":2140,"tds":10768,"avgR":0.21,"nR":16,"rr":2.0,"cap":0.91,"riskPct":1.08,"maxRisk":1.9,"lev":0.62,"score":56,"disc":45,"perf":71,"prov":false,"provWhy":null,"start":"2026-08-04","end":"2026-08-10","idx3":6404},"spokes":[["Rule adherence",null],["Overtrading control",81],["Sizing consistency",0],["Stop discipline",56],["Expectancy",77],["Profit factor",74],["Drawdown control",60]],"curve":[[1,"4 Aug 12:11",715,715],[2,"4 Aug 16:50",671,1386],[3,"4 Aug 19:11",707,2093],[4,"4 Aug 21:22",-784,1309],[5,"5 Aug 02:59",-404,905],[6,"5 Aug 03:27",-798,108],[7,"5 Aug 03:32",-1367,-1260],[8,"5 Aug 12:25",-2198,-3458],[9,"5 Aug 12:38",1920,-1538],[10,"5 Aug 18:56",664,-874],[11,"6 Aug 11:28",560,-313],[12,"6 Aug 18:21",203,-110],[13,"7 Aug 01:13",-465,-575],[14,"7 Aug 15:20",-2091,-2667],[15,"7 Aug 22:33",3490,823],[16,"8 Aug 12:46",2697,3520],[17,"8 Aug 19:02",955,4475],[18,"9 Aug 21:59",2890,7365],[19,"10 Aug 13:40",-790,6575],[20,"10 Aug 21:59",-237,6338],[21,"10 Aug 22:42",-332,6006]],"days":{"2026-08-04":[1309,4,3,[["12:11","long","SOL",715],["16:50","short","BTC",671],["19:11","long","BTC",707],["21:22","long","ETH",-784]]],"2026-08-05":[-2183,6,2,[["02:59","long","BTC",-404],["03:27","short","BTC",-798],["03:32","long","BTC",-1367],["12:25","short","BTC",-2198],["12:38","short","BTC",1920],["18:56","long","BTC",664]]],"2026-08-06":[763,2,2,[["11:28","short","BTC",560],["18:21","long","BTC",203]]],"2026-08-07":[933,3,1,[["01:13","long","SOL",-465],["15:20","long","BTC",-2091],["22:33","long","BTC",3490]]],"2026-08-08":[3652,2,2,[["12:46","long","BTC",2697],["19:02","long","BTC",955]]],"2026-08-09":[2890,1,1,[["21:59","long","BTC",2890]]],"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[{"id":"pnl_by_hour","bk":"0","gross":-3034,"marg":-3034,"n":4,"won":0,"rows":[["5 Aug 02:59","long","BTC",-404],["5 Aug 03:27","short","BTC",-798],["5 Aug 03:32","long","BTC",-1367],["7 Aug 01:13","long","SOL",-465]]},{"id":"fast_reentry","bk":"fast_reentry","gross":-2402,"marg":-237,"n":3,"won":0,"rows":[["5 Aug 03:27","short","BTC",-798],["5 Aug 03:32","long","BTC",-1367],["10 Aug 21:59","long","SOL",-237]]},{"id":"pnl_by_trade_index","bk":"2","gross":-1391,"marg":-594,"n":6,"won":3,"rows":[["4 Aug 16:50","short","BTC",671],["5 Aug 03:27","short","BTC",-798],["6 Aug 18:21","long","BTC",203],["7 Aug 15:20","long","BTC",-2091],["8 Aug 19:02","long","BTC",955],["10 Aug 22:42","long","SOL",-332]]}],"str":[["pnl_by_instrument","Bitcoin",7109,16],["pnl_by_symbol","BTC/INR",7109,16],["pnl_by_direction","long",5850,16],["pnl_by_trade_index","1",5202,7],["after_losing_run","after_losing_run",3806,4]]},"TODAY":{"label":"Monday 10 Aug","m":{"n":3,"net":-1359,"wr":0.0,"be":null,"pf":null,"exp":-453,"avgW":null,"avgL":453,"ratio":null,"W":0,"L":3,"dd":1359,"lstreak":3,"wstreak":0,"days":1,"green":0,"red":1,"tpd":3.0,"fees":270,"tds":1339,"avgR":-0.63,"nR":3,"rr":1.85,"cap":null,"riskPct":0.98,"maxRisk":1.5,"lev":0.52,"score":60,"disc":100,"perf":null,"prov":true,"provWhy":"3 trades \u2014 a score needs at least 20","start":"2026-08-10","end":"2026-08-10","idx3":0},"spokes":[["Rule adherence",null],["Overtrading control",null],["Sizing consistency",null],["Stop discipline",100],["Expectancy",0],["Profit factor",0],["Drawdown control",null]],"curve":[[1,"10 Aug 13:40",-790,-790],[2,"10 Aug 21:59",-237,-1027],[3,"10 Aug 22:42",-332,-1359]],"days":{"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[],"str":[]},"WEEK":{"label":"Week of 10 Aug","m":{"n":3,"net":-1359,"wr":0.0,"be":null,"pf":null,"exp":-453,"avgW":null,"avgL":453,"ratio":null,"W":0,"L":3,"dd":1359,"lstreak":3,"wstreak":0,"days":1,"green":0,"red":1,"tpd":3.0,"fees":270,"tds":1339,"avgR":-0.63,"nR":3,"rr":1.85,"cap":null,"riskPct":0.98,"maxRisk":1.5,"lev":0.52,"score":60,"disc":100,"perf":null,"prov":true,"provWhy":"3 trades \u2014 a score needs at least 20","start":"2026-08-10","end":"2026-08-10","idx3":0},"spokes":[["Rule adherence",null],["Overtrading control",null],["Sizing consistency",null],["Stop discipline",100],["Expectancy",0],["Profit factor",0],["Drawdown control",null]],"curve":[[1,"10 Aug 13:40",-790,-790],[2,"10 Aug 21:59",-237,-1027],[3,"10 Aug 22:42",-332,-1359]],"days":{"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[],"str":[]},"MONTH":{"label":"August so far","m":{"n":28,"net":7417,"wr":53.6,"be":40.4,"pf":1.7,"exp":265,"avgW":1200,"avgL":814,"ratio":1.47,"W":15,"L":13,"dd":5550,"lstreak":5,"wstreak":5,"days":10,"green":7,"red":3,"tpd":2.8,"fees":2590,"tds":13005,"avgR":0.35,"nR":22,"rr":2.0,"cap":0.98,"riskPct":0.98,"maxRisk":1.9,"lev":0.57,"score":61,"disc":48,"perf":81,"prov":false,"provWhy":null,"start":"2026-08-01","end":"2026-08-10","idx3":7815},"spokes":[["Rule adherence",null],["Overtrading control",86],["Sizing consistency",0],["Stop discipline",59],["Expectancy",94],["Profit factor",76],["Drawdown control",70]],"curve":[[1,"1 Aug 01:14",-53,-53],[2,"1 Aug 19:27",924,871],[3,"1 Aug 22:09",-597,275],[4,"2 Aug 13:26",1273,1548],[5,"3 Aug 12:20",-469,1079],[6,"3 Aug 13:36",170,1250],[7,"3 Aug 14:40",162,1411],[8,"4 Aug 12:11",715,2126],[9,"4 Aug 16:50",671,2797],[10,"4 Aug 19:11",707,3504],[11,"4 Aug 21:22",-784,2721],[12,"5 Aug 02:59",-404,2317],[13,"5 Aug 03:27",-798,1519],[14,"5 Aug 03:32",-1367,152],[15,"5 Aug 12:25",-2198,-2046],[16,"5 Aug 12:38",1920,-126],[17,"5 Aug 18:56",664,538],[18,"6 Aug 11:28",560,1098],[19,"6 Aug 18:21",203,1301],[20,"7 Aug 01:13",-465,836],[21,"7 Aug 15:20",-2091,-1255],[22,"7 Aug 22:33",3490,2235],[23,"8 Aug 12:46",2697,4931],[24,"8 Aug 19:02",955,5886],[25,"9 Aug 21:59",2890,8776],[26,"10 Aug 13:40",-790,7986],[27,"10 Aug 21:59",-237,7749],[28,"10 Aug 22:42",-332,7417]],"days":{"2026-08-01":[275,3,1,[["01:14","long","SOL",-53],["19:27","long","ETH",924],["22:09","long","BTC",-597]]],"2026-08-02":[1273,1,1,[["13:26","short","SOL",1273]]],"2026-08-03":[-136,3,2,[["12:20","long","SOL",-469],["13:36","long","BTC",170],["14:40","short","BTC",162]]],"2026-08-04":[1309,4,3,[["12:11","long","SOL",715],["16:50","short","BTC",671],["19:11","long","BTC",707],["21:22","long","ETH",-784]]],"2026-08-05":[-2183,6,2,[["02:59","long","BTC",-404],["03:27","short","BTC",-798],["03:32","long","BTC",-1367],["12:25","short","BTC",-2198],["12:38","short","BTC",1920],["18:56","long","BTC",664]]],"2026-08-06":[763,2,2,[["11:28","short","BTC",560],["18:21","long","BTC",203]]],"2026-08-07":[933,3,1,[["01:13","long","SOL",-465],["15:20","long","BTC",-2091],["22:33","long","BTC",3490]]],"2026-08-08":[3652,2,2,[["12:46","long","BTC",2697],["19:02","long","BTC",955]]],"2026-08-09":[2890,1,1,[["21:59","long","BTC",2890]]],"2026-08-10":[-1359,3,0,[["13:40","long","BTC",-790],["21:59","long","SOL",-237],["22:42","long","SOL",-332]]]},"leaks":[{"id":"pnl_by_hour","bk":"0","gross":-3087,"marg":-3087,"n":5,"won":0,"rows":[["1 Aug 01:14","long","SOL",-53],["5 Aug 02:59","long","BTC",-404],["5 Aug 03:27","short","BTC",-798],["5 Aug 03:32","long","BTC",-1367],["7 Aug 01:13","long","SOL",-465]]},{"id":"fast_reentry","bk":"fast_reentry","gross":-2231,"marg":-67,"n":4,"won":1,"rows":[["3 Aug 13:36","long","BTC",170],["5 Aug 03:27","short","BTC",-798],["5 Aug 03:32","long","BTC",-1367],["10 Aug 21:59","long","SOL",-237]]}],"str":[["pnl_by_instrument","Bitcoin",6845,19],["pnl_by_symbol","BTC/INR",6845,19],["pnl_by_trade_index","1",5954,10],["pnl_by_direction","long",5827,21],["after_losing_run","after_losing_run",3806,4]]}};
+var LEAK={
+ "evening_window:evening":{t:"trying to win the day back after midnight",
+  d:"By 1am you are not looking for a setup any more. You are looking for a way out of the day \u2014 and the market does not hand those out on request.",
+  f:"Hard stop at midnight. The urge to check is the signal, not the chart.",
+  x:"The hours themselves are not the problem \u2014 the same hours make money for people who slept first. What is different at 1am is you: tired, behind, and defending a decision you already made hours ago."},
+ "fast_reentry:fast_reentry":{t:"re-entering within minutes of a loss",
+  d:"A loss stings and the instinct is to answer it straight away. That next trade is rarely a decision \u2014 it is a reaction wearing a decision's clothes.",
+  f:"Ten minutes away from the app after any loss. Set a timer if you need one.",
+  x:"Most of these also happen late, so the two habits feed each other. The ten minutes matter more than the rule \u2014 by then the urge has usually passed on its own."},
+ "pnl_by_trade_index:5":{t:"pushing past your fourth trade",
+  d:"Your first three carry the month. The fourth tends to arrive out of boredom, or the feeling that you left something on the table.",
+  f:"Four and done. The fifth is almost never the good one.",
+  x:"You rarely get this far, which is why the sample is small. But it points the same way every time, and by trade five the day has usually already told you what it is."},
+ "pnl_by_trade_index:2":{t:"on your second trade of the day",
+  d:"The second trade often carries the mood of the first. When the opener goes badly you are not starting fresh \u2014 you are continuing.",
+  f:"Treat the second like a new day. Same checklist, same size.",
+  x:"Worth watching rather than acting on yet \u2014 a handful of trades in one week is not a habit, it is a week."},
+ "pnl_by_hour:0":{t:"in the midnight hour",
+  d:"Midnight is when conviction feels cheapest. Nothing is confirming your idea at that hour except your own tiredness.",
+  f:"Nothing new after midnight. Close the position or close the app.",
+  x:"This is the same behaviour the late-night window describes, seen one hour at a time."}};
+var STR={
+ "pnl_by_trade_index:1":["Your first trade of the day","%m across %n. The opener is where your edge lives."],
+ "pnl_by_trade_index:3":["Your first three trades a day","%m between them. The edge is real \u2014 it just runs out."],
+ "pnl_by_instrument:Bitcoin":["Bitcoin carries you","%m across %n."],
+ "pnl_by_symbol:BTC/INR":["Bitcoin carries you","%m across %n."],
+ "pnl_by_direction:long":["Going long works for you","%m across %n."],
+ "pnl_by_weekday:6":["Sundays are yours","%m across %n."],
+ "after_losing_run:after_losing_run":["You do not tilt after a losing run","%m across %n \u2014 the classic spiral is not yours."]};
+var AI={
+ "evening_window:evening":"Between midnight and 2am something changes, and it is not the market. You are trading to feel better, not to make money \u2014 and the tape does not care how your day went.",
+ "fast_reentry:fast_reentry":"The ten minutes after a loss are the most expensive ten minutes you own. Every one of these was an argument with the last trade, not a read on the next one.",
+ "pnl_by_trade_index:5":"Three trades in, you have taken what the day was offering. The fourth and fifth are you asking it for more than it has.",
+ "pnl_by_trade_index:2":"When the opener goes against you, the second trade stops being a plan and starts being a correction.",
+ "pnl_by_hour:0":"Midnight conviction is almost always tiredness in a costume."};
+var R="\u20b9";
+function inr(v,s){var a=Math.abs(Math.round(v)).toLocaleString('en-IN');return (v<0?"-":(s?"+":""))+R+a;}
+function el(h){var d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild;}
+var CUR="ALL", SELDAY=null, AION=false;
+
+/* ---------- charts ---------- */
+function equity(rg){
+ var T=rg.curve,cum=T.map(function(p){return p[3]}),dk=Object.keys(rg.days).sort();
+ var dl=dk.map(function(k){return [k,rg.days[k][0]]});
+ var W=920,H=300,PL=66,PR=12,PT=20,PB=32;
+ var lo=Math.min.apply(null,cum.concat(dl.map(function(x){return x[1]})).concat([0]));
+ var hi=Math.max.apply(null,cum.concat(dl.map(function(x){return x[1]})).concat([0]));
+ if(hi===lo){hi=lo+1000}
+ var sp=hi-lo,PH=H-PT-PB;
+ function Y(v){return PT+(hi-v)/sp*PH}
+ function X(i,n){return n<2?PL+(W-PL-PR)/2:PL+i*(W-PL-PR)/(n-1)}
+ var o=[],step=Math.max(1000,Math.pow(10,Math.floor(Math.log10(sp)))*(sp/Math.pow(10,Math.floor(Math.log10(sp)))>5?5:2.5));
+ var g=Math.floor(lo/step)*step;
+ for(;g<=hi;g+=step){var y=Y(g);
+  o.push('<line x1="'+PL+'" y1="'+y.toFixed(1)+'" x2="'+(W-PR)+'" y2="'+y.toFixed(1)+'" stroke="'+(g===0?'#242a35':'#131820')+'"/>');
+  var lab=g===0?'0':((g<0?'-':'')+Math.abs(g/1000).toFixed(Math.abs(g)<1000?1:0)+'k');
+  o.push('<text x="'+(PL-9)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end" font-family="JetBrains Mono" font-size="9.5" fill="#5b6474">'+lab+'</text>');}
+ var n=dl.length,slot=(W-PL-PR)/n,bw=Math.min(slot*0.72,44);
+ var MN=["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+ dl.forEach(function(row,i){var d=new Date(row[0]+"T00:00:00Z"),cx=PL+(i+0.5)*slot,y0=Y(0),y1=Y(row[1]);
+  o.push('<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+Math.min(y0,y1).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(Math.abs(y1-y0),2).toFixed(1)+'" rx="1.5" fill="'+(row[1]>=0?'rgba(49,224,160,.22)':'rgba(255,90,110,.20)')+'"/>');
+  if(i%Math.ceil(n/9)===0)o.push('<text x="'+cx.toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5b6474">'+d.getUTCDate()+' '+MN[d.getUTCMonth()+1]+'</text>');});
+ var pts=cum.map(function(v,i){return X(i,cum.length).toFixed(1)+','+Y(v).toFixed(1)}).join(' ');
+ o.push('<polygon points="'+PL+','+Y(lo).toFixed(1)+' '+pts+' '+(W-PR)+','+Y(lo).toFixed(1)+'" fill="rgba(139,123,255,.10)"/>');
+ o.push('<polyline points="'+pts+'" fill="none" stroke="#8b7bff" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>');
+ var pk=cum.indexOf(Math.max.apply(null,cum));
+ o.push('<circle cx="'+X(pk,cum.length).toFixed(1)+'" cy="'+Y(cum[pk]).toFixed(1)+'" r="3.6" fill="#8b7bff"/>');
+ return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="width:100%;height:330px;display:block">'+o.join('')+'</svg>';
+}
+function calendar(rg){
+ var dk=Object.keys(rg.days).sort();
+ var s=new Date(rg.m.start+"T00:00:00Z"),e=new Date(rg.m.end+"T00:00:00Z");
+ var lead=(s.getUTCDay()+6)%7,cells=[],i;
+ for(i=0;i<lead;i++)cells.push('<div class="cd empty"></div>');
+ var NOTES={"2026-07-14":1,"2026-07-21":1,"2026-08-05":1};
+ var d=new Date(s);
+ while(d<=e){
+  var k=d.toISOString().slice(0,10),v=rg.days[k],dn=d.getUTCDate();
+  if(!v){cells.push('<div class="cd none"><span class="dn">'+dn+'</span></div>');}
+  else{var cls=v[0]>0?'pos':'neg',note=NOTES[k]?'<span class="jm"></span>':'';
+   cells.push('<div class="cd '+cls+(SELDAY===k?' sel':'')+'" data-d="'+k+'"><span class="dn">'+dn+note+'</span>'+
+    '<span class="dv">'+inr(v[0],true)+'</span><span class="dt">'+v[1]+(v[1]===1?' trade':' trades')+'</span></div>');}
+  d.setUTCDate(d.getUTCDate()+1);}
+ return cells.join('');
+}
+function radar(rg){
+ var ORD=["Rule adherence","Overtrading control","Sizing consistency","Drawdown control","Profit factor","Expectancy"];
+ var NM={"Overtrading control":"Revenge / overtrade"};
+ var map={};rg.spokes.forEach(function(s){map[s[0]]=s[1]});
+ var W=340,H=258,cx=W/2,cy=H/2+2,Rr=68,o=[],i,ring;
+ for(ring=0.25;ring<=1.001;ring+=0.25){var pp=[];for(i=0;i<6;i++)pp.push((cx+Rr*ring*Math.sin(2*Math.PI*i/6)).toFixed(1)+','+(cy-Rr*ring*Math.cos(2*Math.PI*i/6)).toFixed(1));
+  o.push('<polygon points="'+pp.join(' ')+'" fill="none" stroke="#1a1f29"/>');}
+ for(i=0;i<6;i++)o.push('<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Rr*Math.sin(2*Math.PI*i/6)).toFixed(1)+'" y2="'+(cy-Rr*Math.cos(2*Math.PI*i/6)).toFixed(1)+'" stroke="#1a1f29"/>');
+ var poly=[];ORD.forEach(function(k,j){var v=map[k]||0;poly.push((cx+Rr*(v/100)*Math.sin(2*Math.PI*j/6)).toFixed(1)+','+(cy-Rr*(v/100)*Math.cos(2*Math.PI*j/6)).toFixed(1))});
+ o.push('<polygon points="'+poly.join(' ')+'" fill="rgba(139,123,255,.20)" stroke="#8b7bff" stroke-width="1.6"/>');
+ ORD.forEach(function(k,j){var v=map[k],a=2*Math.PI*j/6,has=v!==null&&v!==undefined;
+  o.push('<circle cx="'+(cx+Rr*((v||0)/100)*Math.sin(a)).toFixed(1)+'" cy="'+(cy-Rr*((v||0)/100)*Math.cos(a)).toFixed(1)+'" r="2.8" fill="'+(has?'#8b7bff':'#ffb44d')+'"/>');
+  var lx=cx+(Rr+19)*Math.sin(a),ly=cy-(Rr+19)*Math.cos(a),an=Math.sin(a)>0.3?'start':(Math.sin(a)<-0.3?'end':'middle');
+  var nm=NM[k]||k,w=nm.split(' '),l1=nm,l2=null;
+  if(nm.length>13&&w.length>1){l2=w.pop();l1=w.join(' ');}
+  o.push('<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+an+'" font-family="JetBrains Mono" font-size="8" fill="#8a94a6">'+l1+'</text>');
+  var dy=9;
+  if(l2){o.push('<text x="'+lx.toFixed(1)+'" y="'+(ly+9).toFixed(1)+'" text-anchor="'+an+'" font-family="JetBrains Mono" font-size="8" fill="#8a94a6">'+l2+'</text>');dy=19;}
+  o.push('<text x="'+lx.toFixed(1)+'" y="'+(ly+dy+1).toFixed(1)+'" text-anchor="'+an+'" font-family="JetBrains Mono" font-size="9.5" font-weight="600" fill="'+(has?'#c9d0dc':'#ffb44d')+'">'+(has?v:'n/a')+'</text>');});
+ return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:300px;height:auto;display:block;margin:0 auto">'+o.join('')+'</svg>';
+}
+/* ---------- metric tiles ---------- */
+var TIP={
+ net:["Net P&L","What you actually kept after fees. The only number that pays."],
+ wr:["Win rate","How often you win. Meaningless alone \u2014 it only matters against the rate you need to break even."],
+ pf:["Profit factor","Rupees made for every rupee lost. Above 1.5 is healthy; below 1.0 you are losing."],
+ exp:["Expectancy","What an average trade is worth to you. Positive means the edge is real, however small."],
+ dd:["Max drawdown","The deepest fall from a peak. It is what one bad run actually costs you."],
+ ratio:["Average win vs average loss","How big your typical winner is against your typical loser. Above 1.5 lets you win less often and still profit."],
+ avgR:["R-multiple","Profit measured against the risk you planned, from your stop-limit orders."],
+ rr:["Planned vs realised R:R","The reward you aim for against what you actually take on winners."],
+ risk:["Risk per trade","How much of your capital each trade risks, from your stop distance. 1\u20132% is the usual guidance."],
+ lev:["Effective leverage","Position size against account size. Spot has no borrowing, so under 1\u00d7 means you hold cash back."],
+ streak:["Losing streak","The most losses you have taken in a row. Worth knowing before it happens again."],
+ tpd:["Trades per day","How often you trade. More is not better \u2014 your first three each day carry the account."]};
+function tile(key,k,v,s){return '<div class="mc" data-tip="'+key+'"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s">'+(s||'')+'</div></div>';}
+function na(){return '<span style="color:var(--fg-5)">\u2014</span>';}
+function metrics(rg){var m=rg.m;
+ return [
+  tile('net','Net P&L','<span class="pos">'+inr(m.net,true)+'</span>',m.W+'W / '+m.L+'L \u00b7 after fees'),
+  tile('wr','Win rate',m.wr+'%',m.be!=null?m.be+'% to break even':''),
+  tile('pf','Profit factor',m.pf!=null?'<span class="'+(m.pf>=1.5?'pos':(m.pf>=1?'warn':'neg'))+'">'+m.pf+'</span>':na(),m.pf==null?'no losses yet':(m.pf>=1.5?'healthy':(m.pf>=1?'thin edge':'losing'))),
+  tile('exp','Expectancy','<span class="'+(m.exp>=0?'pos':'neg')+'">'+inr(m.exp,true)+'</span>','per trade'),
+  tile('dd','Max drawdown','<span class="neg">'+inr(-Math.abs(m.dd))+'</span>',Math.round(m.dd/75000*100)+'% of account'),
+  tile('ratio','Avg win / loss',m.ratio!=null?m.ratio+'\u00d7':na(),m.avgW!=null?inr(m.avgW)+' / '+inr(m.avgL):'not enough data'),
+  tile('avgR','R-multiple',m.avgR!=null?(m.avgR>=0?'+':'')+m.avgR:na(),m.nR?('avg \u00b7 from '+m.nR+' of '+m.n):'no stops recorded'),
+  tile('rr','Planned R:R',m.rr!=null?m.rr:na(),m.cap!=null?('closing at '+m.cap+'\u00d7 target'):'no targets set'),
+  tile('risk','Risk / trade',m.riskPct!=null?m.riskPct+'%':na(),m.maxRisk!=null?('max '+m.maxRisk+'%'):''),
+  tile('lev','Effective leverage',m.lev!=null?m.lev+'\u00d7':na(),'spot \u00b7 no borrowing'),
+  tile('streak','Losing streak',m.lstreak,'best run '+m.wstreak),
+  tile('tpd','Trades / day',m.tpd,m.n+' over '+m.days+(m.days===1?' day':' days'))
+ ].join('');
+}
+/* ---------- cards ---------- */
+function cards(rg){
+ var ls=rg.leaks.slice(0,2);
+ if(!ls.length) return '<div class="empty-state">Nothing is costing you money in this window. <b>'+rg.m.n+' trades over '+rg.m.days+(rg.m.days===1?' day':' days')+
+  '</b> is too little to name a habit \u2014 a finding needs at least 20 trades before we will put a number on it. Widen the range and it will fill in.</div>';
+ var tot=ls.reduce(function(a,l){return a+Math.abs(l.marg)},0);
+ return ls.map(function(l,i){
+  var key=l.id+':'+l.bk,cp=LEAK[key]||{t:'in this pattern',d:'This group of trades is losing money consistently.',f:'Watch it for a week before acting.',x:''};
+  var body=AION&&AI[key]?AI[key]:cp.d;
+  var cf=(i===0&&rg.m.net!=null)?'<span class="cf">Skip these and it was '+inr(rg.m.net+Math.abs(l.gross),true)+', not '+inr(rg.m.net,true)+'.</span>':'';
+  var rows=l.rows.map(function(r){return '<div class="trrow"><span>'+r[0]+' \u00b7 '+r[1]+' '+r[2]+'</span><b class="'+(r[3]>=0?'pos':'neg-2')+'" style="color:'+(r[3]>=0?'var(--pos)':'var(--neg-2)')+'">'+inr(r[3],true)+'</b></div>'}).join('');
+  if(l.n>l.rows.length)rows+='<div class="trrow" style="color:var(--fg-5)"><span>\u2026 '+(l.n-l.rows.length)+' more</span><b></b></div>';
+  return '<div class="c'+(i===0?' top':'')+'" id="lc'+i+'"><div class="cnum">'+(i+1)+'</div><div>'+
+   '<h4><b>'+inr(-Math.abs(l.gross))+'</b> '+cp.t+'</h4>'+
+   '<p class="why">'+body+'</p>'+
+   '<div class="do">'+cp.f+cf+'</div>'+
+   '<div class="meta">'+l.n+' TRADES \u00b7 '+l.won+' WON'+(AION?'<span class="aib">AI wording</span>':'')+'</div>'+
+   '<div class="links"><a data-ex="lc'+i+'">Why this happens \u2304</a><a data-tr="lc'+i+'">See the trades \u2304</a></div>'+
+   (cp.x?'<div class="extra">'+cp.x+'</div>':'<div class="extra">No further detail for this pattern yet.</div>')+
+   '<div class="trades">'+rows+'</div></div></div>';
+ }).join('')+'<div class="meta" style="padding:0 16px 14px;color:var(--fg-5)">Costs are attributed so the same trade is never counted twice \u00b7 '+inr(-tot)+' between them</div>';
+}
+function strengths(rg){
+ if(!rg.str.length)return '<div class="empty-state">Not enough trades in this window to call anything a strength yet.</div>';
+ return '<div class="win">'+rg.str.slice(0,4).map(function(s){
+  var c=STR[s[0]+':'+s[1]]||[s[1],'%m across %n.'];
+  return '<div class="i"><span class="tick">\u2713</span><b>'+c[0]+'</b><br><span>'+
+   c[1].replace('%m','<i>'+inr(s[2],true)+'</i>').replace('%n',s[3]+(s[3]===1?' trade':' trades'))+'</span></div>';}).join('')+'</div>';
+}
+function score(rg){var m=rg.m;
+ if(m.score==null||m.prov)return '<div class="sc"><div class="empty-state" style="padding:6px 0">'+
+  '<b>No score for this window.</b> '+(m.provWhy||'Not enough data')+'. A score from a handful of trades is noise dressed as precision.</div></div>';
+ return '<div class="sc"><div class="top2"><span class="n">'+m.score+'<small>/100</small></span>'+
+  '<span class="sp2">Behaviour <b>'+m.disc+'</b><br>Results <b>'+m.perf+'</b></span></div>'+radar(rg)+
+  '<div class="lk">Rule adherence is a quarter of this score and you have not set any rules yet. <b id="setrules">Set your rules \u2192</b></div></div>';
+}
+function costs(rg){var m=rg.m;
+ return '<div class="fl">'+
+  '<div><div class="k">Trading fees</div><div class="v">'+inr(m.fees)+'</div><div class="n2">0.1% taker, both sides</div></div>'+
+  '<div><div class="k">TDS withheld</div><div class="v warn">'+inr(m.tds)+'</div><div class="n2">1% of sales \u00b7 creditable against tax</div></div>'+
+  '<div><div class="k">Starting capital</div><div class="v">'+R+'75,000</div><div class="n2">you set this</div></div>'+
+  '<div><div class="k">Return on capital</div><div class="v '+(m.net>=0?'pos':'neg')+'">'+(m.net>=0?'+':'')+(m.net/75000*100).toFixed(1)+'%</div><div class="n2">over '+m.days+(m.days===1?' day':' days')+'</div></div>'+
+ '</div>';
+}
+/* ---------- orchestration ---------- */
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
+ clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on')},2600);}
+function setRange(key){
+ if(!DATA[key]){toast('No trades in that window.');return;}
+ CUR=key;SELDAY=null;AION=false;
+ var rg=DATA[key];
+ document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.dataset.rg===key)});
+ document.getElementById('rangelabel').textContent=rg.label.toUpperCase();
+ document.getElementById('mx').innerHTML=metrics(rg);
+ document.getElementById('chartbox').querySelector('.svgslot').innerHTML=equity(rg);
+ document.getElementById('chartmeta').textContent=rg.m.n+' TRADES \u00b7 '+rg.m.days+(rg.m.days===1?' DAY':' DAYS');
+ document.getElementById('cal').innerHTML=calendar(rg);
+ document.getElementById('calmeta').textContent=rg.m.green+' GREEN / '+rg.m.red+' RED \u00b7 \u25cf HAS A NOTE';
+ document.getElementById('cardbox').innerHTML=cards(rg);
+ document.getElementById('cardmeta').textContent=(rg.leaks.slice(0,2).length)+' FOUND';
+ document.getElementById('strbox').innerHTML=strengths(rg);
+ document.getElementById('scorebox').innerHTML=score(rg);
+ document.getElementById('costbox').innerHTML=costs(rg);
+ document.getElementById('daypanel').classList.remove('on');
+ var ex=document.getElementById('explain');ex.disabled=!rg.leaks.length;ex.textContent='Explain this';
+ wireAll(rg);
+}
+function wireAll(rg){
+ /* metric hints */
+ var h=document.getElementById('hint');
+ document.querySelectorAll('.mc[data-tip]').forEach(function(e){
+  e.onmouseenter=function(){var t=TIP[e.dataset.tip];if(!t)return;
+   h.innerHTML='<b>'+t[0]+'</b>'+t[1];
+   var r=e.getBoundingClientRect(),hw=h.offsetWidth,l=r.left+r.width/2-hw/2;
+   if(l<8)l=8;if(l+hw>innerWidth-8)l=innerWidth-hw-8;h.style.left=l+'px';
+   var bl=r.bottom+8,hh=h.offsetHeight;h.style.top=(bl+hh>innerHeight-8?r.top-hh-8:bl)+'px';h.style.opacity='1';};
+  e.onmouseleave=function(){h.style.opacity='0'};});
+ /* calendar */
+ var ct=document.getElementById('caltip');
+ document.querySelectorAll('.cd[data-d]').forEach(function(c){
+  var k=c.dataset.d,v=rg.days[k];
+  c.onmouseenter=function(){
+   var d=new Date(k+"T00:00:00Z"),MN=["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+   var lost=v[3].filter(function(t){return t[3]<0}).reduce(function(a,t){return a+t[3]},0);
+   var made=v[3].filter(function(t){return t[3]>0}).reduce(function(a,t){return a+t[3]},0);
+   var best=v[3].reduce(function(a,t){return (a===null||t[3]>a[3])?t:a},null);
+   ct.innerHTML='<div class="dd">'+d.getUTCDate()+' '+MN[d.getUTCMonth()+1].toUpperCase()+' \u00b7 '+
+     ['MON','TUE','WED','THU','FRI','SAT','SUN'][(d.getUTCDay()+6)%7]+'</div>'+
+    '<div class="row"><span>Net</span><b style="color:'+(v[0]>=0?'#31e0a0':'#ff5a6e')+'">'+inr(v[0],true)+'</b></div>'+
+    '<div class="row"><span>Trades</span><b>'+v[1]+' \u00b7 '+v[2]+' won</b></div>'+
+    '<div class="row"><span>Made</span><b style="color:#31e0a0">'+inr(made,true)+'</b></div>'+
+    '<div class="row"><span>Lost</span><b style="color:#ff5a6e">'+inr(lost)+'</b></div>'+
+    (best?'<div class="row"><span>Best</span><b>'+best[1]+' '+best[2]+' '+inr(best[3],true)+'</b></div>':'')+
+    '<div class="row" style="color:#b9aeff;padding-top:4px"><span>Click to open the day</span><b></b></div>';
+   var r=c.getBoundingClientRect();ct.style.left=(r.left+r.width/2)+'px';ct.style.top=r.top+'px';ct.style.opacity='1';};
+  c.onmouseleave=function(){ct.style.opacity='0'};
+  c.onclick=function(){openDay(k,rg)};});
+ /* card disclosure */
+ document.querySelectorAll('.c .links a').forEach(function(a){
+  a.onclick=function(){
+   var ex=a.dataset.ex,tr=a.dataset.tr,card=document.getElementById(ex||tr);
+   if(ex){card.classList.toggle('ex');a.textContent=card.classList.contains('ex')?'Why this happens \u2303':'Why this happens \u2304';}
+   else{card.classList.toggle('tr');a.textContent=card.classList.contains('tr')?'See the trades \u2303':'See the trades \u2304';}};});
+ var sr=document.getElementById('setrules');
+ if(sr)sr.onclick=function(){toast('Rules screen is not built yet \u2014 it unlocks a quarter of the score.')};
+}
+function openDay(k,rg){
+ var v=rg.days[k];if(!v)return;
+ SELDAY=k;
+ document.querySelectorAll('.cd[data-d]').forEach(function(c){c.classList.toggle('sel',c.dataset.d===k)});
+ var d=new Date(k+"T00:00:00Z"),MN=["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+ var rows=v[3].map(function(t){return '<div class="trrow"><span>'+t[0]+' \u00b7 '+t[1]+' '+t[2]+'</span><b style="color:'+(t[3]>=0?'var(--pos)':'var(--neg-2)')+'">'+inr(t[3],true)+'</b></div>'}).join('');
+ var p=document.getElementById('daypanel');
+ p.innerHTML='<div class="dh"><span class="t">'+d.getUTCDate()+' '+MN[d.getUTCMonth()+1]+' \u00b7 '+v[1]+
+  (v[1]===1?' trade':' trades')+' \u00b7 <span style="color:'+(v[0]>=0?'var(--pos)':'var(--neg)')+'">'+inr(v[0],true)+
+  '</span></span><button class="x" id="dayx">\u00d7</button></div>'+rows;
+ p.classList.add('on');
+ document.getElementById('dayx').onclick=function(){p.classList.remove('on');SELDAY=null;
+  document.querySelectorAll('.cd.sel').forEach(function(c){c.classList.remove('sel')});};
+}
+/* chart crosshair */
+(function(){
+ var box=document.getElementById('chartbox');
+ box.addEventListener('mousemove',function(e){
+  var svg=box.querySelector('svg');if(!svg)return;
+  var T=DATA[CUR].curve;if(T.length<2)return;
+  var cum=T.map(function(p){return p[3]}),dk=Object.keys(DATA[CUR].days).sort();
+  var dv=dk.map(function(k){return DATA[CUR].days[k][0]});
+  var lo=Math.min.apply(null,cum.concat(dv).concat([0])),hi=Math.max.apply(null,cum.concat(dv).concat([0]));
+  if(hi===lo)hi=lo+1000;
+  var VB=920,VH=300,PL=66,PR=12,PT=20,PB=32;
+  var r=svg.getBoundingClientRect(),br=box.getBoundingClientRect();
+  var sx=r.width/VB,sy=r.height/VH,lf=r.left-br.left,tp0=r.top-br.top;
+  var sp=(VB-PL-PR)/(T.length-1),i=Math.round(((e.clientX-r.left)/sx-PL)/sp);
+  if(i<0)i=0;if(i>T.length-1)i=T.length-1;
+  var d=T[i],px=(PL+i*sp)*sx,py=(PT+(hi-d[3])/(hi-lo)*(VH-PT-PB))*sy;
+  var cr=document.getElementById('cross'),dt=document.getElementById('dot'),tp=document.getElementById('tip');
+  cr.style.left=(lf+px)+'px';dt.style.left=(lf+px)+'px';dt.style.top=(tp0+py)+'px';
+  tp.innerHTML='<div class="d">TRADE '+d[0]+' \u00b7 '+d[1].toUpperCase()+'</div>'+
+   '<div class="r"><span>This trade</span><b style="color:'+(d[2]>=0?'#31e0a0':'#ff5a6e')+'">'+inr(d[2],true)+'</b></div>'+
+   '<div class="r"><span>Running total</span><b style="color:'+(d[3]>=0?'#31e0a0':'#ff5a6e')+'">'+inr(d[3],true)+'</b></div>';
+  var tw=tp.offsetWidth||170,th=tp.offsetHeight||60,tl=lf+px,mn=lf+tw/2+4,mx=lf+r.width-tw/2-4;
+  if(tl<mn)tl=mn;if(tl>mx)tl=mx;tp.style.left=tl+'px';
+  if(py-14-th<0){tp.style.transform='translate(-50%,0)';tp.style.top=(tp0+py+16)+'px';}
+  else{tp.style.transform='translate(-50%,-100%)';tp.style.top=(tp0+py-14)+'px';}
+  box.classList.add('live');});
+ box.addEventListener('mouseleave',function(){box.classList.remove('live')});
+})();
+/* journal */
+(function(){
+ var jb=document.getElementById('jb'),bar=document.getElementById('jbar'),cta=document.getElementById('jcta');
+ bar.onclick=function(){jb.classList.toggle('open');cta.textContent=jb.classList.contains('open')?'Close':'Add a note \u203a';};
+ jb.querySelector('.jbody').onclick=function(e){e.stopPropagation()};
+ jb.querySelectorAll('.em').forEach(function(e){e.onclick=function(ev){ev.stopPropagation();
+  var was=e.classList.contains('on');jb.querySelectorAll('.em').forEach(function(x){x.classList.remove('on')});
+  if(!was)e.classList.add('on');};});
+ function done(msg){jb.classList.remove('open');cta.innerHTML='<span class="saved">'+msg+'</span>';}
+ document.getElementById('jsave').onclick=function(e){e.stopPropagation();
+  var m=jb.querySelector('.em.on'),txt=jb.querySelector('textarea').value.trim();
+  done('\u2713 Saved');toast('Note saved for 5 Aug'+(m?' \u00b7 '+m.textContent.replace(/[^a-z]/gi,''):'' ));};
+ document.getElementById('jskip').onclick=function(e){e.stopPropagation();done('Skipped');toast('Skipped for today.')};
+})();
+/* header buttons */
+document.querySelectorAll('.seg button').forEach(function(b){b.onclick=function(){setRange(b.dataset.rg)}});
+document.getElementById('adddata').onclick=function(){toast('Import screen is not built yet. CoinSwitch syncs automatically.')};
+document.getElementById('explain').onclick=function(){
+ var b=this;if(b.disabled)return;
+ b.disabled=true;b.textContent='Thinking\u2026';
+ setTimeout(function(){AION=true;
+  document.getElementById('cardbox').innerHTML=cards(DATA[CUR]);wireAll(DATA[CUR]);
+  b.textContent='AI wording on';toast('The coach rewrote both cards. Every figure is still the engine\u2019s.');},1100);};
+/* coach */
+(function(){
+ var btn=document.getElementById('coach'),chat=document.getElementById('chat'),body=document.getElementById('chatbody');
+ function A(q){var m=DATA[CUR].m,l=DATA[CUR].leaks[0];
+  if(/lose|lost|why/i.test(q))return l?'Most of it came from one place: <b>'+inr(-Math.abs(l.gross))+'</b> across '+l.n+' trades in that '+(LEAK[l.id+':'+l.bk]?LEAK[l.id+':'+l.bk].t:'pattern')+'. The rest of your trading was fine.':'Nothing stands out in this window \u2014 there is not enough here to blame anything.';
+  if(/drawdown|risk|survive/i.test(q))return 'Your worst fall was <b>'+inr(-Math.abs(m.dd))+'</b>, which is '+Math.round(m.dd/75000*100)+'% of your account'+(m.dd>m.net?' and larger than what you finished with. That means one bad run erases the period rather than dents it.':'.');
+  if(/change|fix|first/i.test(q))return l?'One thing only: '+(LEAK[l.id+':'+l.bk]?LEAK[l.id+':'+l.bk].f:'watch that pattern')+' Skip those and this window was <b>'+inr(m.net+Math.abs(l.gross),true)+'</b> instead of '+inr(m.net,true)+'.':'Nothing yet \u2014 come back when there are more trades.';
+  if(/score/i.test(q))return m.score!=null?'You are at <b>'+m.score+'/100</b> \u2014 behaviour '+m.disc+', results '+m.perf+'. A quarter of it is locked until you set your own rules.':'No score for this window \u2014 too few trades to be honest about.';
+  if(/fee|tds|tax|cost/i.test(q))return 'Fees were <b>'+inr(m.fees)+'</b> at CoinSwitch\u2019s 0.1% taker rate. TDS withheld was '+inr(m.tds)+', which is 1% of your sale value and creditable against your tax \u2014 not a loss.';
+  return 'I can only speak to what is in your trades \u2014 no price calls. Try asking about your drawdown, your worst pattern, or what to change first.';}
+ function add(cls,html){var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
+ function ask(q){add('u',q);var t=add('a think','thinking\u2026');
+  setTimeout(function(){t.classList.remove('think');t.innerHTML=A(q);body.scrollTop=body.scrollHeight;},600);}
+ btn.onclick=function(){chat.classList.toggle('open');
+  if(chat.classList.contains('open')&&!body.children.length){
+   var m=DATA[CUR].m;
+   add('a','This window closed <b>'+inr(m.net,true)+'</b>'+(m.dd?' with a worst fall of <b>'+inr(-Math.abs(m.dd))+'</b>':'')+'. Ask me anything about it.');}};
+ document.getElementById('chatx').onclick=function(){chat.classList.remove('open')};
+ document.querySelectorAll('.chip').forEach(function(c){c.onclick=function(){ask(c.textContent)}});
+ function send(){var i=document.getElementById('chatin');if(i.value.trim()){ask(i.value.trim());i.value=''}}
+ document.getElementById('chatsend').onclick=send;
+ document.getElementById('chatin').onkeydown=function(e){if(e.key==='Enter')send()};
+})();
+setRange('ALL');
+
+</script>
+</body>
+</html>
