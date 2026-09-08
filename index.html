@@ -31,8 +31,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
 .btn.pri:hover{background:var(--accent)}
 .btn[disabled]{opacity:.55;cursor:default}
 .who{width:27px;height:27px;border-radius:50%;background:var(--raised);border:1px solid var(--line);display:grid;place-items:center;font-size:10px;color:var(--fg-3)}
-.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
-.left,.right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+.left,.right{display:flex;flex-direction:column;gap:18px;min-width:0}
 .p{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
 .ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:14px 18px 0}
 .ph .t{font-size:13.5px;font-weight:600}
@@ -47,7 +47,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
 .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:0 4px 5px}
 .dow span{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.1em;color:var(--fg-5);text-align:center}
 .grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:0 4px}
-.cd{border-radius:6px;border:1px solid var(--line-soft);background:var(--raised);padding:6px 7px;display:flex;flex-direction:column;min-height:68px;cursor:pointer;transition:transform .1s,border-color .12s}
+.cd{border-radius:6px;border:1px solid var(--line-soft);background:var(--raised);padding:6px 7px;display:flex;flex-direction:column;min-height:56px;cursor:pointer;transition:transform .1s,border-color .12s}
 .cd:not(.empty):not(.none):hover{transform:translateY(-2px);border-color:#3b4358}
 .cd.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-d)}
 .cd.empty{background:none;border-color:transparent;cursor:default}
@@ -55,7 +55,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
 .cd .dn{font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--fg-3);display:flex;align-items:center;gap:4px}
 .cd .jm{width:5px;height:5px;border-radius:50%;background:var(--accent-2);display:inline-block}
 .cd .dv{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;margin-top:auto}
-.cd .dt{font-size:8.5px;color:var(--fg-5)}
+.cd .dt{display:none}
+.cd .dvk{display:none;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:600;margin-top:auto}
 .cd.pos{background:rgba(49,224,160,.09);border-color:rgba(49,224,160,.22)}.cd.pos .dv{color:var(--pos)}
 .cd.neg{background:rgba(255,90,110,.08);border-color:rgba(255,90,110,.2)}.cd.neg .dv{color:var(--neg)}
 .hd{display:flex;justify-content:space-between;align-items:baseline;padding:14px 18px 12px;border-bottom:1px solid var(--line)}
@@ -166,52 +167,115 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
 .daypanel .dh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
 .daypanel .dh .t{font-size:13px;font-weight:600}
 .daypanel .dh .x{background:none;border:0;color:var(--fg-4);cursor:pointer;font-size:16px;line-height:1}
+
+
+.morebtn{margin-top:10px;width:100%;background:none;border:1px dashed var(--line);color:var(--fg-4);
+ font:inherit;font-size:11.5px;padding:8px;border-radius:var(--r-sm);cursor:pointer}
+.morebtn:hover{border-color:var(--fg-5);color:var(--fg-2)}
+.rangepick{font-family:"JetBrains Mono",monospace;font-size:11.5px;white-space:nowrap}
+.seglbl{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.12em;color:var(--fg-5)}
+@media(min-width:1241px){.rangepick{display:none}}
+@media(max-width:1240px){.seglbl{display:none}}
+.hero{display:none}
+.tabs{display:none}
+.sheet{position:fixed;inset:0;background:rgba(3,4,7,.72);z-index:80;display:none;align-items:flex-end}
+.sheet.on{display:flex}
+.sheetbox{width:100%;background:var(--panel);border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:8px 12px 22px}
+.sheeth{display:flex;justify-content:space-between;align-items:center;padding:10px 8px 8px;font-size:14px;font-weight:600}
+.sheeth button{background:none;border:0;color:var(--fg-4);font-size:20px;cursor:pointer;line-height:1}
+.sheetbox>button[data-rg]{display:block;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line-soft);
+ color:var(--fg-2);font:inherit;font-size:14px;padding:13px 8px;cursor:pointer}
+.sheetbox>button[data-rg]:hover{color:var(--fg)}
+@media(min-width:1241px){.sheet{align-items:center;justify-content:center}
+ .sheetbox{max-width:320px;border-radius:14px;border:1px solid var(--line)}}
+
+/* ================= MOBILE: four tabs ================= */
 @media(max-width:1240px){
- .cols{display:flex;flex-direction:column}
+ body{padding-bottom:76px}
+ .wrap{padding:0 14px 20px}
+ .note{font-size:10.5px;padding:6px 14px}
+ .bar{gap:8px;padding:12px 0 10px}
+ .bar .seg{display:none}
+ #adddata{display:none}
+ .bar{flex-wrap:nowrap}
+ #explain{white-space:nowrap;padding:6px 10px}
+ .rangepick{flex:0 0 auto;white-space:nowrap}
+ .bar{gap:7px}
+ .logo{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .bar .gap{flex:1}
+ .bar .who{margin-left:auto}
+ .logo{font-size:15px}.src{display:none}
+ .hero{display:block;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 16px 14px;margin-bottom:14px;box-shadow:var(--sh)}
+ .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+ .hero .hl{font-size:12.5px;color:var(--fg-4)}
+ .hero .hv{font-family:"JetBrains Mono",monospace;font-size:34px;font-weight:600;line-height:1.1;margin-top:3px}
+ .hero .hs{font-size:11.5px;color:var(--fg-5);margin-top:4px}
+ .hero-two{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-soft);
+  border:1px solid var(--line);border-radius:var(--r-sm);overflow:hidden;margin-top:14px}
+ .hero-two>div{background:var(--panel);padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+ .hero-two .k{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-4)}
+ .hero-two .v{font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:600}
+ .seeall{margin-top:12px;width:100%;background:var(--raised);border:1px solid var(--line);color:var(--accent-2);
+  font:inherit;font-size:12.5px;padding:10px;border-radius:var(--r-sm);cursor:pointer}
+ .cols{display:flex;flex-direction:column;gap:14px}
  .left,.right{display:contents}
- .mx{grid-template-columns:repeat(3,1fr)}
- .o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}
-}
-@media(max-width:700px){
- .wrap{padding:0 12px 100px}
+ .cols [data-tab]{display:none}
+ .hero{display:none}
+ body[data-tab="home"] .hero{display:block}
+ body[data-tab="home"] .cols [data-tab="home"]{display:block}
+ body[data-tab="stats"] .cols [data-tab="stats"]{display:block}
+ body[data-tab="profile"] .cols [data-tab="profile"]{display:block}
+ body[data-tab="coach"] .wrap>.cols{display:none}
+ body[data-tab="coach"] .note,body[data-tab="coach"] .bar{display:none}
+ .coach{display:none}
+ body[data-tab="coach"] .chat{display:flex;position:fixed;inset:0 0 68px 0;width:auto;max-width:none;
+  height:auto;max-height:none;border-radius:0;border:0}
+ .tabs{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:rgba(10,12,17,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
+ .tabbtn{background:none;border:0;color:var(--fg-5);font:inherit;font-size:10.5px;padding:9px 4px 11px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+ .tabbtn span{font-size:15px;line-height:1}
+ .tabbtn.on{color:var(--accent-2)}
  .mx{grid-template-columns:repeat(2,1fr)}
+ .c{grid-template-columns:26px 1fr;gap:11px;padding:16px 14px}
+ .c h4{font-size:16px}
  .fl{grid-template-columns:1fr}
- .cd{min-height:44px}.cd .dt{display:none}.cd .dv{font-size:10px}
- .c{grid-template-columns:24px 1fr;gap:10px;padding:14px 12px}
- .c h4{font-size:15px}.cnum{font-size:18px}
- .chat{right:12px;left:12px;width:auto;bottom:80px}
- .coach{right:14px;bottom:14px;padding:11px 15px;font-size:13px}
 }
+@media(max-width:700px){.grid7,.dow{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:0}.cd{min-height:44px;padding:5px 4px;overflow:hidden}.cd .dv{display:none}.cd .dvk{display:block}.cd.pos .dvk{color:var(--pos)}.cd.neg .dvk{color:var(--neg)}.cd .dn{font-size:8.5px;gap:2px}.dow span{font-size:8px;letter-spacing:.04em}}
 </style>
 </head>
 <body>
-<div class="note">Interactive design demo &middot; synthetic CoinSwitch trader, 94 spot trades run through the real engine &middot; &#8377;75,000 account &middot; every control works</div>
+<div class="note">Interactive demo &middot; synthetic trader, real engine &middot; every control works</div>
 <div class="wrap">
   <div class="bar">
     <span class="logo">Trading Coach</span><span class="src">CoinSwitch &middot; synced 2 min ago</span><span class="gap"></span>
+    <span class="seglbl">DATE RANGE</span>
     <div class="seg"><button type="button" data-rg="TODAY">TODAY</button><button type="button" data-rg="WEEK">WEEK</button><button type="button" data-rg="MONTH">MONTH</button></div>
-    <div class="seg"><button type="button" data-rg="7D">7D</button><button type="button" data-rg="30D">30D</button><button type="button" data-rg="90D">90D</button><button type="button" data-rg="ALL" class="on">ALL</button></div>
+    <div class="seg"><button type="button" data-rg="7D">7D</button><button type="button" data-rg="30D">30D</button><button type="button" data-rg="90D">90D</button><button type="button" data-rg="ALL" class="on">ALL TIME</button></div>
+    <button class="btn rangepick" type="button" id="rangepick">All time</button>
     <button class="btn" type="button" id="adddata">Add data</button>
     <button class="btn pri" type="button" id="explain">Explain this</button>
     <span class="who">AR</span>
   </div>
+  <div class="hero" id="hero"></div>
   <div class="cols">
     <div class="left">
-      <div class="p o2"><div class="ph"><span class="t">Your numbers</span><span class="m2" id="rangelabel"></span></div>
-        <div class="pb"><div class="mx" id="mx"></div></div></div>
-      <div class="p o4"><div class="ph"><span class="t">P&amp;L</span><span class="m2" id="chartmeta"></span></div>
+      <div class="p o2" data-tab="stats"><div class="ph"><span class="t">Your numbers</span><span class="m2" id="rangelabel"></span></div>
+        <div class="pb"><div class="mx" id="mx"></div><button class="morebtn" id="moremx" type="button">Show all 12</button></div></div>
+      <div class="p o4" data-tab="stats"><div class="ph"><span class="t">P&amp;L</span><span class="m2" id="chartmeta"></span></div>
         <div class="pb" id="chartbox"><div class="svgslot"></div><div id="cross"></div><div id="dot"></div><div id="tip"></div></div></div>
-      <div class="p o5"><div class="ph"><span class="t">Calendar</span><span class="m2" id="calmeta"></span></div>
+      <div class="p o5" data-tab="stats"><div class="ph"><span class="t">Calendar</span><span class="m2" id="calmeta"></span></div>
         <div class="pb"><div class="dow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
         <div class="grid7" id="cal"></div></div>
         <div class="daypanel" id="daypanel"></div></div>
-      <div class="p o7"><div class="ph"><span class="t">Costs &amp; account</span><span class="m2">FEES &middot; TDS &middot; CAPITAL</span></div>
+      <div class="p o7" data-tab="stats"><div class="ph"><span class="t">Costs &amp; account</span><span class="m2"></span></div>
         <div class="pb" style="padding-top:8px" id="costbox"></div></div>
     </div>
     <div class="right">
-      <div class="jb o1" id="jb">
+      <div class="jb o1" id="jb" data-tab="home">
         <div class="jbar" id="jbar"><span class="t">Your trading journal</span>
-          <span class="d">WED 5 AUG &middot; 4 TRADES &middot; -&#8377;2,240</span><span class="sp"></span>
+          <span class="d">WED 5 AUG</span><span class="sp"></span>
           <span class="cta" id="jcta">Add a note &rsaquo;</span></div>
         <div class="jbody">
           <div class="emo"><span class="em"><i>&#9989;</i>Followed my plan</span><span class="em"><i>&#128257;</i>Chased a loss</span><span class="em"><i>&#128640;</i>Jumped in late</span><span class="em"><i>&#9986;</i>Cut a winner early</span><span class="em"><i>&#128207;</i>Sized too big</span><span class="em"><i>&#9200;</i>Traded too much</span></div>
@@ -219,11 +283,11 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
           <div class="jfoot"><button class="btn" type="button" id="jskip">Skip</button><button class="btn pri" type="button" id="jsave">Save</button></div>
         </div>
       </div>
-      <div class="p o3"><div class="hd"><span class="t">What&rsquo;s costing you</span><span class="m2" id="cardmeta"></span></div>
+      <div class="p o3" data-tab="home"><div class="hd"><span class="t">What&rsquo;s costing you</span><span class="m2" id="cardmeta"></span></div>
         <div id="cardbox"></div></div>
-      <div class="p o6"><div class="hd"><span class="t">What you&rsquo;re doing right</span><span class="m2">FROM YOUR TRADES</span></div>
+      <div class="p o6" data-tab="stats"><div class="hd"><span class="t">What you&rsquo;re doing right</span><span class="m2"></span></div>
         <div id="strbox"></div></div>
-      <div class="p o7"><div class="hd"><span class="t">Your score</span><span class="m2">60% BEHAVIOUR / 40% RESULT</span></div>
+      <div class="p o7" data-tab="profile"><div class="hd"><span class="t">Your score</span><span class="m2"></span></div>
         <div id="scorebox"></div></div>
     </div>
   </div>
@@ -235,6 +299,19 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>
   AI Coach<span class="dotp"></span>
 </button>
+<nav class="tabs">
+  <button class="tabbtn on" data-tab="home" type="button"><span>&#9679;</span>Home</button>
+  <button class="tabbtn" data-tab="stats" type="button"><span>&#9635;</span>Stats</button>
+  <button class="tabbtn" data-tab="coach" type="button"><span>&#9670;</span>Coach</button>
+  <button class="tabbtn" data-tab="profile" type="button"><span>&#9678;</span>Profile</button>
+</nav>
+<div class="sheet" id="rangesheet">
+  <div class="sheetbox"><div class="sheeth">Date range<button id="sheetclose" type="button">&times;</button></div>
+   <button data-rg="TODAY" type="button">Today</button><button data-rg="WEEK" type="button">This week</button>
+   <button data-rg="MONTH" type="button">This month</button><button data-rg="7D" type="button">Last 7 days</button>
+   <button data-rg="30D" type="button">Last 30 days</button><button data-rg="90D" type="button">Last 90 days</button>
+   <button data-rg="ALL" type="button">All time</button></div>
+</div>
 <div class="chat" id="chat">
   <div class="ch"><span class="av">&#9670;</span><span><span class="t">Your coach</span><br><span class="s">Reads your dashboard &middot; never guesses prices</span></span>
     <button class="x" id="chatx" type="button">&times;</button></div>
@@ -259,17 +336,17 @@ var DEMO={
  MONTH:{sp:{"Rule adherence":66,"Overtrading control":86,"Sizing consistency":58,"Drawdown control":55,"Profit factor":57,"Expectancy":61},t:64,b:69,r:58}};
 var LEAK={
  "evening_window:evening":{t:"trying to win the day back after midnight",
-  d:"Eighteen trades between midnight and 2am, and only four of them worked. By that hour you are not reading the market any more, you are trying to undo the day. These are setups you would have walked past at noon.",
+  d:"18 trades between midnight and 2am, and only four of them worked. By that hour you are not reading the market any more, you are trying to undo the day. These are setups you would have walked past at noon.",
   f:"Set midnight as your close and treat it like the market shutting. No new positions after it for the next two weeks. If you find yourself watching charts at 1am, that is the moment to shut the app rather than place the order.",
   x:"The hours themselves are not the problem. The same hours make money for traders who slept first and started fresh. What is different at 1am is you, tired and behind, defending a decision you made hours ago."},
  "fast_reentry:fast_reentry":{t:"re-entering within minutes of a loss",
-  d:"Fourteen times you opened a new position inside ten minutes of closing a loser. A loss stings and the instinct is to answer it immediately, but that next trade is almost never a fresh read. It is the last one continued.",
+  d:"14 times you opened a new position inside ten minutes of closing a loser. A loss stings and the instinct is to answer it immediately, but that next trade is almost never a fresh read. It is the last one continued.",
   f:"Give yourself ten minutes after every loss before you look for the next entry. Close the app, get up, and come back. Most of the urge will have passed by itself, and what is left is a real decision.",
   x:"Most of these also happen late at night, so the two habits feed each other. The ten minutes matter more than any rule about setups, because the pause is what breaks the chain."},
  "pnl_by_trade_index:5":{t:"on the fifth trade of the day",
-  d:"You reached a fifth trade on five separate days, and every one of those days it cost you money. Your first three trades are where the profit is made. By the fifth you are usually trying to fix something from earlier rather than acting on a setup.",
+  d:"You reached a fifth trade on 5 separate days, and every one of those days it cost you money. Your first three trades are where the profit is made. By the fifth you are usually trying to fix something from earlier rather than acting on a setup.",
   f:"Decide your trade count before the session starts, not during it. Four is where your edge runs out on your own numbers, so write it down, and when you hit four log off for the day whether you are up or down.",
-  x:"Five days is a small sample and worth treating as a signal rather than proof. But it points the same direction every time, and by the fifth trade the day has usually already told you what it was going to be."},
+  x:"5 days is a small sample and worth treating as a signal rather than proof. But it points the same direction every time, and by the fifth trade the day has usually already told you what it was going to be."},
  "pnl_by_trade_index:2":{t:"on your second trade of the day",
   d:"The second trade tends to carry the mood of the first. When the opener goes against you, you are not starting again, you are continuing, and the size and the patience both slip.",
   f:"After a losing first trade, take five minutes before the second. Re-read your plan for the day rather than reacting to the result you just had, and size the second exactly as you sized the first.",
@@ -294,6 +371,7 @@ var AI={
  "pnl_by_hour:0":"Midnight conviction is almost always tiredness in a costume."};
 var R="\u20b9";
 function inr(v,s){var a=Math.abs(Math.round(v)).toLocaleString('en-IN');return (v<0?"-":(s?"+":""))+R+a;}
+function inrk(v){var a=Math.abs(v),s=v<0?'-':'+';if(a>=1000){var n=(a/1000).toFixed(1).replace(/\.0$/,'');return s+n+'k';}return s+Math.round(a);}
 function el(h){var d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild;}
 var CUR="ALL", SELDAY=null, AION=false;
 
@@ -338,7 +416,7 @@ function calendar(rg){
   if(!v){cells.push('<div class="cd none"><span class="dn">'+dn+'</span></div>');}
   else{var cls=v[0]>0?'pos':'neg',note=NOTES[k]?'<span class="jm"></span>':'';
    cells.push('<div class="cd '+cls+(SELDAY===k?' sel':'')+'" data-d="'+k+'"><span class="dn">'+dn+note+'</span>'+
-    '<span class="dv">'+inr(v[0],true)+'</span><span class="dt">'+v[1]+(v[1]===1?' trade':' trades')+'</span></div>');}
+    '<span class="dv">'+inr(v[0],true)+'</span><span class="dvk">'+inrk(v[0])+'</span><span class="dt">'+v[1]+(v[1]===1?' trade':' trades')+'</span></div>');}
   d.setUTCDate(d.getUTCDate()+1);}
  return cells.join('');
 }
@@ -379,21 +457,22 @@ var TIP={
  tpd:["Trades per day","How often you trade. More is not better \u2014 your first three each day carry the account."]};
 function tile(key,k,v,s){return '<div class="mc" data-tip="'+key+'"><div class="k">'+k+'</div><div class="v">'+v+'</div><div class="s">'+(s||'')+'</div></div>';}
 function na(){return '<span style="color:var(--fg-5)">\u2014</span>';}
-function metrics(rg){var m=rg.m;
- return [
-  tile('net','Net P&L','<span class="pos">'+inr(m.net,true)+'</span>',m.W+'W / '+m.L+'L \u00b7 after fees'),
+function metrics(rg,all){var m=rg.m;
+ var A=[
+  tile('net','Net P&L','<span class="pos">'+inr(m.net,true)+'</span>',m.W+'W / '+m.L+'L'),
   tile('wr','Win rate',m.wr+'%',m.be!=null?m.be+'% to break even':''),
-  tile('pf','Profit factor',m.pf!=null?'<span class="'+(m.pf>=1.5?'pos':(m.pf>=1?'warn':'neg'))+'">'+m.pf+'</span>':na(),m.pf==null?'no losses yet':(m.pf>=1.5?'healthy':(m.pf>=1?'thin edge':'losing'))),
+  tile('pf','Profit factor',m.pf!=null?'<span class="'+(m.pf>=1.5?'pos':(m.pf>=1?'warn':'neg'))+'">'+m.pf+'</span>':na(),''),
   tile('exp','Expectancy','<span class="'+(m.exp>=0?'pos':'neg')+'">'+inr(m.exp,true)+'</span>','per trade'),
   tile('dd','Max drawdown','<span class="neg">'+inr(-Math.abs(m.dd))+'</span>',Math.round(m.dd/75000*100)+'% of account'),
-  tile('ratio','Avg win / loss',m.ratio!=null?m.ratio+'\u00d7':na(),m.avgW!=null?inr(m.avgW)+' / '+inr(m.avgL):'not enough data'),
-  tile('avgR','R-multiple',m.avgR!=null?(m.avgR>=0?'+':'')+m.avgR:na(),m.nR?('avg \u00b7 from '+m.nR+' of '+m.n):'no stops recorded'),
-  tile('rr','Planned R:R',m.rr!=null?m.rr:na(),m.cap!=null?('closing at '+m.cap+'\u00d7 target'):'no targets set'),
+  tile('ratio','Avg win / loss',m.ratio!=null?m.ratio+'\u00d7':na(),m.avgW!=null?inr(m.avgW)+' / '+inr(m.avgL):''),
+  tile('avgR','R-multiple',m.avgR!=null?(m.avgR>=0?'+':'')+m.avgR:na(),m.nR?('from '+m.nR+' of '+m.n):''),
+  tile('tpd','Trades / day',m.tpd,m.n+' over '+m.days+(m.days===1?' day':' days'))];
+ var B=[
+  tile('rr','Planned R:R',m.rr!=null?m.rr:na(),m.cap!=null?('closing at '+m.cap+'\u00d7'):''),
   tile('risk','Risk / trade',m.riskPct!=null?m.riskPct+'%':na(),m.maxRisk!=null?('max '+m.maxRisk+'%'):''),
-  tile('lev','Effective leverage',m.lev!=null?m.lev+'\u00d7':na(),'spot \u00b7 no borrowing'),
-  tile('streak','Losing streak',m.lstreak,'best run '+m.wstreak),
-  tile('tpd','Trades / day',m.tpd,m.n+' over '+m.days+(m.days===1?' day':' days'))
- ].join('');
+  tile('lev','Effective leverage',m.lev!=null?m.lev+'\u00d7':na(),''),
+  tile('streak','Losing streak',m.lstreak,'best run '+m.wstreak)];
+ return (all?A.concat(B):A).join('');
 }
 /* ---------- cards ---------- */
 function cards(rg){
@@ -410,15 +489,14 @@ function cards(rg){
    '<h4><b>'+inr(-Math.abs(l.gross))+'</b> '+cp.t+'</h4>'+
    '<p class="why">'+body+'</p>'+
    '<div class="do">'+cp.f+cf+'</div>'+
-   '<div class="meta">'+l.n+' TRADES \u00b7 '+l.won+' WON'+(AION?'<span class="aib">AI wording</span>':'')+'</div>'+
-   '<div class="links"><a data-ex="lc'+i+'">Why this happens \u2304</a><a data-tr="lc'+i+'">See the trades \u2304</a></div>'+
-   (cp.x?'<div class="extra">'+cp.x+'</div>':'<div class="extra">No further detail for this pattern yet.</div>')+
-   '<div class="trades">'+rows+'</div></div></div>';
+   (AION?'<div class="meta"><span class="aib">AI wording</span></div>':'')+
+   '<div class="links"><a data-ex="lc'+i+'">Details \u2304</a></div>'+
+   '<div class="extra">'+(cp.x||'')+'<div class="trades">'+rows+'</div></div></div></div>';
  }).join('');
 }
 function strengths(rg){
  if(!rg.str.length)return '<div class="empty-state">Not enough trades in this window to call anything a strength yet.</div>';
- return '<div class="win">'+rg.str.slice(0,4).map(function(s){
+ return '<div class="win">'+rg.str.slice(0,3).map(function(s){
   var c=STR[s[0]+':'+s[1]]||[s[1],'%m across %n.'];
   return '<div class="i"><span class="tick">\u2713</span><b>'+c[0]+'</b><br><span>'+
    c[1].replace('%m','<i>'+inr(s[2],true)+'</i>').replace('%n',s[3]+(s[3]===1?' trade':' trades'))+'</span></div>';}).join('')+'</div>';
@@ -445,6 +523,29 @@ function costs(rg){var m=rg.m;
   '<div><div class="k">Return on capital</div><div class="v '+(m.net>=0?'pos':'neg')+'">'+(m.net>=0?'+':'')+(m.net/75000*100).toFixed(1)+'%</div><div class="n2">over '+m.days+(m.days===1?' day':' days')+'</div></div>'+
  '</div>';
 }
+
+/* ---------- mobile hero: headline + 2 supports + sparkline ---------- */
+function spark(rg){
+ var c=rg.curve.map(function(p){return p[3]});
+ if(c.length<2)return '';
+ var W=120,H=34,lo=Math.min.apply(null,c),hi=Math.max.apply(null,c);
+ if(hi===lo)hi=lo+1;
+ var pts=c.map(function(v,i){return (i*(W/(c.length-1))).toFixed(1)+','+(H-2-((v-lo)/(hi-lo))*(H-4)).toFixed(1)}).join(' ');
+ var up=c[c.length-1]>=0;
+ return '<svg viewBox="0 0 '+W+' '+H+'" style="width:120px;height:34px"><polyline points="'+pts+
+  '" fill="none" stroke="'+(up?'#31e0a0':'#ff5a6e')+'" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+}
+function hero(rg){var m=rg.m;
+ return '<div class="hero-top"><div><div class="hl">'+(m.net>=0?'You made':'You lost')+'</div>'+
+  '<div class="hv '+(m.net>=0?'pos':'neg')+'">'+inr(m.net,true)+'</div>'+
+  '<div class="hs">'+m.days+(m.days===1?' day':' days')+' \u00b7 '+m.n+' trades</div></div>'+
+  '<div class="hspark">'+spark(rg)+'</div></div>'+
+  '<div class="hero-two"><div><span class="k">Win rate</span><span class="v">'+m.wr+'%</span></div>'+
+  '<div><span class="k">Worst drop</span><span class="v neg">'+inr(-Math.abs(m.dd))+'</span></div></div>'+
+  '<button class="seeall" id="seeall" type="button">See all numbers \u203a</button>';
+}
+var SHOWALL=false;
+if(!document.body.getAttribute('data-tab'))document.body.setAttribute('data-tab','home');
 /* ---------- orchestration ---------- */
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');
  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on')},2600);}
@@ -454,7 +555,10 @@ function setRange(key){
  var rg=DATA[key];
  document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.dataset.rg===key)});
  document.getElementById('rangelabel').textContent=rg.label.toUpperCase();
- document.getElementById('mx').innerHTML=metrics(rg);
+ var SHORT={ALL:'All time','90D':'90 days','30D':'30 days','7D':'7 days',TODAY:'Today',WEEK:'This week',MONTH:'This month'};
+ document.getElementById('rangepick').textContent=SHORT[key]||rg.label;
+ document.getElementById('mx').innerHTML=metrics(rg,SHOWALL);
+ document.getElementById('hero').innerHTML=hero(rg);
  document.getElementById('chartbox').querySelector('.svgslot').innerHTML=equity(rg);
  document.getElementById('chartmeta').textContent=rg.m.n+' TRADES \u00b7 '+rg.m.days+(rg.m.days===1?' DAY':' DAYS');
  document.getElementById('cal').innerHTML=calendar(rg);
@@ -500,10 +604,9 @@ function wireAll(rg){
   c.onclick=function(){openDay(k,rg)};});
  /* card disclosure */
  document.querySelectorAll('.c .links a').forEach(function(a){
-  a.onclick=function(){
-   var ex=a.dataset.ex,tr=a.dataset.tr,card=document.getElementById(ex||tr);
-   if(ex){card.classList.toggle('ex');a.textContent=card.classList.contains('ex')?'Why this happens \u2303':'Why this happens \u2304';}
-   else{card.classList.toggle('tr');a.textContent=card.classList.contains('tr')?'See the trades \u2303':'See the trades \u2304';}};});
+  a.onclick=function(){var card=document.getElementById(a.dataset.ex);card.classList.toggle('ex');
+   a.textContent=card.classList.contains('ex')?'Hide details \u2303':'Details \u2304';};});
+
  var sr=document.getElementById('setrules');
  if(sr)sr.onclick=function(){toast('Rules screen is not built yet \u2014 it unlocks a quarter of the score.')};
 }
@@ -585,16 +688,32 @@ document.getElementById('explain').onclick=function(){
  function add(cls,html){var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
  function ask(q){add('u',q);var t=add('a think','thinking\u2026');
   setTimeout(function(){t.classList.remove('think');t.innerHTML=A(q);body.scrollTop=body.scrollHeight;},600);}
- btn.onclick=function(){chat.classList.toggle('open');
-  if(chat.classList.contains('open')&&!body.children.length){
-   var m=DATA[CUR].m;
+ window.seedChat=function(){if(!body.children.length){var m=DATA[CUR].m;
    add('a','This window closed <b>'+inr(m.net,true)+'</b>'+(m.dd?' with a worst fall of <b>'+inr(-Math.abs(m.dd))+'</b>':'')+'. Ask me anything about it.');}};
+ btn.onclick=function(){chat.classList.toggle('open');if(chat.classList.contains('open'))window.seedChat();};
  document.getElementById('chatx').onclick=function(){chat.classList.remove('open')};
  document.querySelectorAll('.chip').forEach(function(c){c.onclick=function(){ask(c.textContent)}});
  function send(){var i=document.getElementById('chatin');if(i.value.trim()){ask(i.value.trim());i.value=''}}
  document.getElementById('chatsend').onclick=send;
  document.getElementById('chatin').onkeydown=function(e){if(e.key==='Enter')send()};
 })();
+
+if(document.getElementById('moremx'))document.getElementById('moremx').onclick=function(){SHOWALL=!SHOWALL;
+ document.getElementById('mx').innerHTML=metrics(DATA[CUR],SHOWALL);wireAll(DATA[CUR]);
+ this.textContent=SHOWALL?'Show less':'Show all 12';};
+document.querySelectorAll('.tabbtn').forEach(function(b){b.onclick=function(){
+ var t=b.dataset.tab;document.body.setAttribute('data-tab',t);
+ document.querySelectorAll('.tabbtn').forEach(function(x){x.classList.toggle('on',x===b)});
+ if(t==='coach'){document.getElementById('chat').classList.add('open');seedChat();}
+ else{document.getElementById('chat').classList.remove('open');}
+ window.scrollTo(0,0);};});
+document.addEventListener('click',function(e){
+ var t=e.target.closest&&e.target.closest('#seeall');
+ if(t){var b=document.querySelector('.tabbtn[data-tab="stats"]');if(b)b.click();}});
+if(document.getElementById('rangepick'))document.getElementById('rangepick').onclick=function(){document.getElementById('rangesheet').classList.add('on');};
+if(document.getElementById('sheetclose'))document.getElementById('sheetclose').onclick=function(){document.getElementById('rangesheet').classList.remove('on');};
+document.querySelectorAll('#rangesheet button[data-rg]').forEach(function(b){
+ b.onclick=function(){setRange(b.dataset.rg);document.getElementById('rangesheet').classList.remove('on');};});
 setRange('ALL');
 
 </script>
