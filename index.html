@@ -102,12 +102,12 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
 .empty-state{padding:22px 16px;font-size:13px;line-height:1.55;color:var(--fg-4)}
 .empty-state b{color:var(--fg-2)}
 .win{padding:13px 18px 15px}
-.win .i{padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
+.win .i{display:grid;grid-template-columns:auto 1fr;column-gap:6px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px}
 .win .i:last-child{border-bottom:none;padding-bottom:0}
 .win .i b{font-weight:600}
 .win .i span{color:var(--fg-4);font-size:11.5px}
 .win .i span i{font-family:"JetBrains Mono",monospace;color:var(--pos);font-style:normal}
-.win .tick{color:var(--pos);margin-right:6px}
+.win .tick{color:var(--pos);line-height:1.5}
 .sc{padding:14px 18px 16px}
 .sc .top2{display:flex;align-items:baseline;gap:16px}
 .sc .n{font-family:"JetBrains Mono",monospace;font-size:34px;font-weight:600;line-height:1}
@@ -172,7 +172,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
 .morebtn{margin-top:10px;width:100%;background:none;border:1px dashed var(--line);color:var(--fg-4);
  font:inherit;font-size:11.5px;padding:8px;border-radius:var(--r-sm);cursor:pointer}
 .morebtn:hover{border-color:var(--fg-5);color:var(--fg-2)}
-.rangepick{font-family:"JetBrains Mono",monospace;font-size:11.5px;white-space:nowrap}
+.rangepick{font-family:"JetBrains Mono",monospace;font-size:11.5px;white-space:nowrap;-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:27px;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A//www.w3.org/2000/svg'%20width%3D'8'%20height%3D'5'%20viewBox%3D'0%200%208%205'%3E%3Cpath%20d%3D'M1%201l3%203%203-3'%20stroke%3D'%238a94a6'%20stroke-width%3D'1.4'%20fill%3D'none'%20stroke-linecap%3D'round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.rangepick option{background:var(--panel);color:var(--fg)}
 .seglbl{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.12em;color:var(--fg-5)}
 @media(min-width:1241px){.rangepick{display:none}}
 @media(max-width:1240px){.seglbl{display:none}}
@@ -198,7 +199,6 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
  .bar .seg{display:none}
  #adddata{display:none}
  .bar{flex-wrap:nowrap}
- #explain{white-space:nowrap;padding:6px 10px}
  .rangepick{flex:0 0 auto;white-space:nowrap}
  .bar{gap:7px}
  .logo{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -218,14 +218,15 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
  .hero-two .v{font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:600}
  .seeall{margin-top:12px;width:100%;background:var(--raised);border:1px solid var(--line);color:var(--accent-2);
   font:inherit;font-size:12.5px;padding:10px;border-radius:var(--r-sm);cursor:pointer}
- .cols{display:flex;flex-direction:column;gap:14px}
+ .cols{display:flex;flex-direction:column;gap:14px;align-items:stretch}
  .left,.right{display:contents}
  .cols [data-tab]{display:none}
  .hero{display:none}
  body[data-tab="home"] .hero{display:block}
- body[data-tab="home"] .cols [data-tab="home"]{display:block}
- body[data-tab="stats"] .cols [data-tab="stats"]{display:block}
- body[data-tab="profile"] .cols [data-tab="profile"]{display:block}
+ body[data-tab="home"] .cols [data-tab~="home"]{display:block}
+ body[data-tab="stats"] .cols [data-tab~="stats"]{display:block}
+ body[data-tab="profile"] .cols [data-tab~="profile"]{display:block}
+ body[data-tab="profile"] #jb{order:2}
  body[data-tab="coach"] .wrap>.cols{display:none}
  body[data-tab="coach"] .note,body[data-tab="coach"] .bar{display:none}
  .coach{display:none}
@@ -240,7 +241,9 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
  .mx{grid-template-columns:repeat(2,1fr)}
  .c{grid-template-columns:26px 1fr;gap:11px;padding:16px 14px}
  .c h4{font-size:16px}
- .fl{grid-template-columns:1fr}
+ .fl{grid-template-columns:repeat(2,1fr)}
+ .fl>div{padding:11px 12px}
+ .fl .n2{font-size:9px}
 }
 @media(max-width:700px){.grid7,.dow{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:0}.cd{min-height:44px;padding:5px 4px;overflow:hidden}.cd .dv{display:none}.cd .dvk{display:block}.cd.pos .dvk{color:var(--pos)}.cd.neg .dvk{color:var(--neg)}.cd .dn{font-size:8.5px;gap:2px}.dow span{font-size:8px;letter-spacing:.04em}}
 </style>
@@ -253,10 +256,9 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
     <span class="seglbl">DATE RANGE</span>
     <div class="seg"><button type="button" data-rg="TODAY">TODAY</button><button type="button" data-rg="WEEK">WEEK</button><button type="button" data-rg="MONTH">MONTH</button></div>
     <div class="seg"><button type="button" data-rg="7D">7D</button><button type="button" data-rg="30D">30D</button><button type="button" data-rg="90D">90D</button><button type="button" data-rg="ALL" class="on">ALL TIME</button></div>
-    <button class="btn rangepick" type="button" id="rangepick">All time</button>
+    <select class="btn rangepick" id="rangesel" aria-label="Date range"><option value="TODAY">Today</option><option value="WEEK">This week</option><option value="MONTH">This month</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option><option value="ALL" selected>All time</option></select>
     <button class="btn" type="button" id="adddata">Add data</button>
-    <button class="btn pri" type="button" id="explain">Explain this</button>
-    <span class="who">AR</span>
+        <span class="who">AR</span>
   </div>
   <div class="hero" id="hero"></div>
   <div class="cols">
@@ -273,7 +275,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
         <div class="pb" style="padding-top:8px" id="costbox"></div></div>
     </div>
     <div class="right">
-      <div class="jb o1" id="jb" data-tab="home">
+      <div class="jb o1" id="jb" data-tab="home profile">
         <div class="jbar" id="jbar"><span class="t">Your trading journal</span>
           <span class="d">WED 5 AUG</span><span class="sp"></span>
           <span class="cta" id="jcta">Add a note &rsaquo;</span></div>
@@ -305,13 +307,6 @@ body{margin:0;background:var(--bg);color:var(--fg);font-size:14px;font-family:"S
   <button class="tabbtn" data-tab="coach" type="button"><span>&#9670;</span>Coach</button>
   <button class="tabbtn" data-tab="profile" type="button"><span>&#9678;</span>Profile</button>
 </nav>
-<div class="sheet" id="rangesheet">
-  <div class="sheetbox"><div class="sheeth">Date range<button id="sheetclose" type="button">&times;</button></div>
-   <button data-rg="TODAY" type="button">Today</button><button data-rg="WEEK" type="button">This week</button>
-   <button data-rg="MONTH" type="button">This month</button><button data-rg="7D" type="button">Last 7 days</button>
-   <button data-rg="30D" type="button">Last 30 days</button><button data-rg="90D" type="button">Last 90 days</button>
-   <button data-rg="ALL" type="button">All time</button></div>
-</div>
 <div class="chat" id="chat">
   <div class="ch"><span class="av">&#9670;</span><span><span class="t">Your coach</span><br><span class="s">Reads your dashboard &middot; never guesses prices</span></span>
     <button class="x" id="chatx" type="button">&times;</button></div>
@@ -498,8 +493,8 @@ function strengths(rg){
  if(!rg.str.length)return '<div class="empty-state">Not enough trades in this window to call anything a strength yet.</div>';
  return '<div class="win">'+rg.str.slice(0,3).map(function(s){
   var c=STR[s[0]+':'+s[1]]||[s[1],'%m across %n.'];
-  return '<div class="i"><span class="tick">\u2713</span><b>'+c[0]+'</b><br><span>'+
-   c[1].replace('%m','<i>'+inr(s[2],true)+'</i>').replace('%n',s[3]+(s[3]===1?' trade':' trades'))+'</span></div>';}).join('')+'</div>';
+  return '<div class="i"><span class="tick">\u2713</span><div><b>'+c[0]+'</b><br><span>'+
+   c[1].replace('%m','<i>'+inr(s[2],true)+'</i>').replace('%n',s[3]+(s[3]===1?' trade':' trades'))+'</span></div></div>';}).join('')+'</div>';
 }
 function score(rg){var m=rg.m,dm=DEMO[CUR];
  if(m.score==null||m.prov||!dm)return '<div class="sc"><div class="empty-state" style="padding:6px 0">'+
@@ -555,8 +550,7 @@ function setRange(key){
  var rg=DATA[key];
  document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.dataset.rg===key)});
  document.getElementById('rangelabel').textContent=rg.label.toUpperCase();
- var SHORT={ALL:'All time','90D':'90 days','30D':'30 days','7D':'7 days',TODAY:'Today',WEEK:'This week',MONTH:'This month'};
- document.getElementById('rangepick').textContent=SHORT[key]||rg.label;
+ var rs=document.getElementById('rangesel');if(rs)rs.value=key;
  document.getElementById('mx').innerHTML=metrics(rg,SHOWALL);
  document.getElementById('hero').innerHTML=hero(rg);
  document.getElementById('chartbox').querySelector('.svgslot').innerHTML=equity(rg);
@@ -569,7 +563,6 @@ function setRange(key){
  document.getElementById('scorebox').innerHTML=score(rg);
  document.getElementById('costbox').innerHTML=costs(rg);
  document.getElementById('daypanel').classList.remove('on');
- var ex=document.getElementById('explain');ex.disabled=!rg.leaks.length;ex.textContent='Explain this';
  wireAll(rg);
 }
 function wireAll(rg){
@@ -669,12 +662,6 @@ function openDay(k,rg){
 /* header buttons */
 document.querySelectorAll('.seg button').forEach(function(b){b.onclick=function(){setRange(b.dataset.rg)}});
 document.getElementById('adddata').onclick=function(){toast('Import screen is not built yet. CoinSwitch syncs automatically.')};
-document.getElementById('explain').onclick=function(){
- var b=this;if(b.disabled)return;
- b.disabled=true;b.textContent='Thinking\u2026';
- setTimeout(function(){AION=true;
-  document.getElementById('cardbox').innerHTML=cards(DATA[CUR]);wireAll(DATA[CUR]);
-  b.textContent='AI wording on';toast('The coach rewrote both cards. Every figure is still the engine\u2019s.');},1100);};
 /* coach */
 (function(){
  var btn=document.getElementById('coach'),chat=document.getElementById('chat'),body=document.getElementById('chatbody');
@@ -710,10 +697,7 @@ document.querySelectorAll('.tabbtn').forEach(function(b){b.onclick=function(){
 document.addEventListener('click',function(e){
  var t=e.target.closest&&e.target.closest('#seeall');
  if(t){var b=document.querySelector('.tabbtn[data-tab="stats"]');if(b)b.click();}});
-if(document.getElementById('rangepick'))document.getElementById('rangepick').onclick=function(){document.getElementById('rangesheet').classList.add('on');};
-if(document.getElementById('sheetclose'))document.getElementById('sheetclose').onclick=function(){document.getElementById('rangesheet').classList.remove('on');};
-document.querySelectorAll('#rangesheet button[data-rg]').forEach(function(b){
- b.onclick=function(){setRange(b.dataset.rg);document.getElementById('rangesheet').classList.remove('on');};});
+if(document.getElementById('rangesel'))document.getElementById('rangesel').onchange=function(){setRange(this.value);};
 setRange('ALL');
 
 </script>
